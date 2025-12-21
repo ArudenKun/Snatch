@@ -1,0 +1,44 @@
+<Project>
+  <!-- https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <AvaloniaVersion>11.3.10</AvaloniaVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <GlobalPackageReference Include="CSharpier.MsBuild" Version="1.2.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="AutoInterface" Version="2.4.1" />
+    <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="11.3.10" />
+    <PackageVersion Include="AvantiPoint.CodeGenHelpers" Version="2.0.30-pre" />
+    <PackageVersion Include="CliWrap" Version="3.10.0" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="H.Generators.Extensions" Version="1.24.2" />
+    <PackageVersion Include="HotAvalonia" Version="3.0.2" />
+    <PackageVersion Include="Humanizer.Core" Version="3.0.1" />
+    <PackageVersion Include="Lucide.Avalonia" Version="0.1.54" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.21.1" />
+    <PackageVersion Include="MonoMod.RuntimeDetour" Version="25.3.3" />
+    <PackageVersion Include="Polyfill" Version="9.4.1" />
+    <PackageVersion Include="R3" Version="1.3.0" />
+    <PackageVersion Include="R3Extensions.Avalonia" Version="1.3.0" />
+    <PackageVersion Include="R3Extensions.ObservableEvents.SourceGenerator" Version="1.3.3" />
+    <PackageVersion Include="Serilog.Enrichers.Demystifier" Version="1.0.3" />
+    <PackageVersion Include="Serilog.Extensions.Hosting" Version="10.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Async" Version="2.1.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageVersion Include="SukiUI.Dock" Version="6.0.3" />
+    <PackageVersion Include="TrailBase" Version="0.5.0" />
+    <PackageVersion Include="Velopack" Version="0.0.1298" />
+    <PackageVersion Include="Volo.Abp.Autofac" Version="10.0.1" />
+    <PackageVersion Include="Volo.Abp.EventBus" Version="10.0.1" />
+    <PackageVersion Include="ZLinq" Version="1.5.4" />
+  </ItemGroup>
+</Project>

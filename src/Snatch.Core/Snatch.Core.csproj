@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CliWrap" />
+    <PackageReference Include="Humanizer.Core" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Kiota.Bundle" />
+    <PackageReference Include="R3" />
+    <PackageReference Include="R3Extensions.ObservableEvents.SourceGenerator" />
+    <PackageReference Include="TrailBase" />
+    <PackageReference Include="ZLinq" />
+  </ItemGroup>
+</Project>

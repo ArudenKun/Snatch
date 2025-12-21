@@ -1,0 +1,26 @@
+﻿<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:snatch="https://github.com/arudenkun/Snatch">
+    <Design.PreviewWith>
+        <Panel Background="White">
+            <snatch:SwitchPresenter
+                Margin="24"
+                TargetType="x:Int32"
+                Value="2">
+                <snatch:SwitchCase Value="1">1</snatch:SwitchCase>
+                <snatch:SwitchCase Value="2">222</snatch:SwitchCase>
+                <snatch:SwitchCase Value="3">3</snatch:SwitchCase>
+            </snatch:SwitchPresenter>
+        </Panel>
+    </Design.PreviewWith>
+    <ControlTheme
+        x:Key="{x:Type snatch:SwitchPresenter}"
+        TargetType="snatch:SwitchPresenter">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter Content="{TemplateBinding Content}" />
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

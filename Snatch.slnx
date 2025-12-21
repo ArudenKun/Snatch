@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Src/">
+    <Project Path="src/Snatch.Core/Snatch.Core.csproj" />
+    <Project Path="src/Snatch.Desktop/Snatch.Desktop.csproj" />
+    <Project Path="src/Snatch.Hosting/Snatch.Hosting.csproj" />
+    <Project Path="src/Snatch.SourceGenerators/Snatch.SourceGenerators.csproj" />
+    <Project Path="src/Snatch/Snatch.csproj" />
+  </Folder>
+</Solution>
