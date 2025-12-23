@@ -6,9 +6,11 @@
   </Folder>
   <Folder Name="/Src/">
     <Project Path="src/Snatch.Core/Snatch.Core.csproj" />
-    <Project Path="src/Snatch.Desktop/Snatch.Desktop.csproj" />
     <Project Path="src/Snatch.Hosting/Snatch.Hosting.csproj" />
     <Project Path="src/Snatch.SourceGenerators/Snatch.SourceGenerators.csproj" />
     <Project Path="src/Snatch/Snatch.csproj" />
+  </Folder>
+  <Folder Name="/Src/Platforms/">
+    <Project Path="src/Snatch.Windows/Snatch.Windows.csproj" />
   </Folder>
 </Solution>

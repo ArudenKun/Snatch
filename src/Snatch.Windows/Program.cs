@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Snatch.Desktop;
+namespace Snatch.Windows;
 
 internal static class Program
 {
