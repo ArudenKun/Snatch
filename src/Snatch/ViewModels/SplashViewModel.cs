@@ -5,7 +5,7 @@ using Volo.Abp.DependencyInjection;
 
 namespace Snatch.ViewModels;
 
-public sealed partial class SplashViewModel : ViewModel, ITransientDependency
+public sealed partial class SplashViewModel : ViewModel
 {
     [ObservableProperty]
     public partial string StatusText { get; set; } = "Initializing";

@@ -1,9 +1,9 @@
 ﻿using System.Net;
-using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Snatch.Options;
 
+[Option("Youtube")]
 public sealed partial class YoutubeOptions : ObservableObject
 {
     [ObservableProperty]

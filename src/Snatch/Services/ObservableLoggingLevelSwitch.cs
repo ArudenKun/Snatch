@@ -1,6 +1,6 @@
 ﻿using R3;
-using R3.ObservableEvents;
 using Serilog.Core;
+using Snatch.Options;
 
 namespace Snatch.Services;
 
@@ -8,18 +8,12 @@ public sealed class ObservableLoggingLevelSwitch : LoggingLevelSwitch, IDisposab
 {
     private readonly CompositeDisposable _disposables = new();
 
-    public ObservableLoggingLevelSwitch(SettingsService settingsService)
-        : base(settingsService.Logging.LogEventLevel)
+    public ObservableLoggingLevelSwitch(LoggingOptions options)
+        : base(options.LogEventLevel)
     {
-        settingsService
-            .Events()
-            .Loaded.Take(1)
-            .Subscribe(_ =>
-                settingsService
-                    .Logging.ObservePropertyChanged(s => s.LogEventLevel)
-                    .Subscribe(x => MinimumLevel = x)
-                    .AddTo(_disposables)
-            )
+        options
+            .ObservePropertyChanged(s => s.LogEventLevel)
+            .Subscribe(x => MinimumLevel = x)
             .AddTo(_disposables);
     }
 

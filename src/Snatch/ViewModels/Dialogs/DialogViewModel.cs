@@ -12,7 +12,7 @@ public abstract partial class DialogViewModel<TResult> : ViewModel, IDialogViewM
 {
     private bool _isResultSet;
 
-    public DialogViewModel()
+    protected DialogViewModel()
     {
         Dialog = new SukiDialog();
     }

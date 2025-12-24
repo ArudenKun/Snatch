@@ -21,23 +21,21 @@ public static class AppHelper
         get
         {
             if (
-                File.Exists(AppDir.CombinePath(".portable"))
-                || Directory.Exists(AppDir.CombinePath("data"))
-                || IsDebug
+                !File.Exists(AppDir.CombinePath(".portable"))
+                && !Directory.Exists(AppDir.CombinePath("data"))
+                && !IsDebug
             )
+                return RoamingDir.CombinePath(Name);
+            var dataDir = AppDir.CombinePath("data");
+            if (!Directory.Exists(dataDir))
             {
-                var dataDir = AppDir.CombinePath("data");
-                if (!Directory.Exists(dataDir))
-                {
-                    Directory.CreateDirectory(dataDir);
-                }
-                return dataDir;
+                Directory.CreateDirectory(dataDir);
             }
-            return RoamingDir.CombinePath(Name);
+            return dataDir;
         }
     }
 
     public static string LogsDir => DataDir.CombinePath("logs");
 
-    public static string SettingsPath => DataDir.CombinePath("settings.json");
+    public static string SettingsPath => DataDir.CombinePath("appsettings.json");
 }

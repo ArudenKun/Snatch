@@ -68,11 +68,11 @@
                         Header="LogLevel"
                         IconKind="Logs">
                         <ComboBox
-                            ItemsSource="{Binding SettingsService.Logging.LogEventLevel,
+                            ItemsSource="{Binding LoggingOptions.LogEventLevel,
                                                   Converter={x:Static snatch:EnumToEnumerableConverter.Instance},
                                                   Mode=OneTime}"
                             PlaceholderText="LogLevel"
-                            SelectedItem="{Binding SettingsService.Logging.LogEventLevel}" />
+                            SelectedItem="{Binding LoggingOptions.LogEventLevel}" />
                     </snatch:SettingsRow>
                     <TextBlock
                         Classes="SettingsRowHeader"
@@ -81,6 +81,11 @@
                         Header="Check"
                         IconKind="CircleArrowUp">
                         <TextBox Watermark="Test" />
+                    </snatch:SettingsRow>
+                    <snatch:SettingsRow
+                        Header="Check"
+                        IconKind="CircleArrowUp">
+                        <TextBox Watermark="{Binding Test}" />
                     </snatch:SettingsRow>
                 </StackPanel>
             </TabItem>
@@ -91,11 +96,11 @@
                         Header="Theme"
                         IconKind="SunMoon">
                         <ComboBox
-                            ItemsSource="{Binding SettingsService.Appearance.Theme,
+                            ItemsSource="{Binding AppearanceOptions.Theme,
                                                   Converter={x:Static snatch:EnumToEnumerableConverter.Instance},
                                                   Mode=OneTime}"
                             PlaceholderText="Theme"
-                            SelectedItem="{Binding SettingsService.Appearance.Theme}" />
+                            SelectedItem="{Binding AppearanceOptions.Theme}" />
                     </snatch:SettingsRow>
                     <snatch:SettingsRow
                         Description="Test Description"
@@ -103,7 +108,7 @@
                         IconKind="Palette">
                         <ComboBox
                             ItemsSource="{Binding ColorThemes}"
-                            SelectedItem="{Binding SettingsService.Appearance.ThemeColor}" />
+                            SelectedItem="{Binding AppearanceOptions.ThemeColor}" />
                     </snatch:SettingsRow>
                 </StackPanel>
             </TabItem>

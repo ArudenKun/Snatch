@@ -1,7 +1,9 @@
 ﻿using AutoInterfaceAttributes;
 using Avalonia.Controls.Notifications;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Options;
 using Snatch.Models;
+using Snatch.Options;
 using SukiUI.Toasts;
 using Volo.Abp.DependencyInjection;
 
@@ -12,12 +14,12 @@ namespace Snatch.Services;
 public sealed class ToastService : IToastService, ISingletonDependency
 {
     private readonly ISukiToastManager _manager;
-    private readonly SettingsService _settingsService;
+    private readonly AppearanceOptions _options;
 
-    public ToastService(ISukiToastManager manager, SettingsService settingsService)
+    public ToastService(ISukiToastManager manager, IOptions<AppearanceOptions> options)
     {
         _manager = manager;
-        _settingsService = settingsService;
+        _options = options.Value;
     }
 
     /// <summary>
@@ -40,7 +42,7 @@ public sealed class ToastService : IToastService, ISingletonDependency
         if (autoDismiss)
         {
             toast.SetCanDismissByClicking(true);
-            toast.SetDismissAfter(_settingsService.Appearance.ToastDuration);
+            toast.SetDismissAfter(_options.ToastDuration);
         }
 
         if (!string.IsNullOrWhiteSpace(title))

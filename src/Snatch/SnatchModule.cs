@@ -39,11 +39,6 @@ public sealed class SnatchModule : AbpModule
         context.Services.AddTransient<ILauncher>(sp => sp.GetRequiredService<TopLevel>().Launcher);
     }
 
-    public override void OnPreApplicationInitialization(ApplicationInitializationContext context)
-    {
-        context.ServiceProvider.GetRequiredService<SettingsService>().Load();
-    }
-
     public override void OnApplicationShutdown(ApplicationShutdownContext context)
     {
         context.ServiceProvider.GetRequiredService<SettingsService>().Save();

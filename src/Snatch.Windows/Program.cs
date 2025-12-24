@@ -8,6 +8,7 @@ namespace Snatch.Windows;
 internal static class Program
 {
     private static readonly IHost Host = new HostBuilder()
+        .ConfigureDefaults(null)
         .UseSnatch(appBuilder => appBuilder.UsePlatformDetect().LogToTrace())
         .Build();
 

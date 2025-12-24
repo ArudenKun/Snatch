@@ -1,56 +1,97 @@
-﻿using System.Text.Json.Serialization;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Snatch.Core;
+﻿using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using ServiceScan.SourceGenerator;
 using Snatch.Options;
 using Snatch.Utilities;
 using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Services;
 
-[ObservableObject]
-public sealed partial class SettingsService : JsonFileBase, ISingletonDependency
+public sealed partial class SettingsService : ISingletonDependency
 {
-    public event Action<bool>? Loaded;
-    public event Action? Saved;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly Dictionary<object, PropertyInfo[]> _rootMap = [];
+    private readonly Dictionary<string, object?> _sectionMap = new();
 
-    public SettingsService()
-        : base(AppHelper.SettingsPath, SettingServiceJsonSerializerContext.Default) { }
-
-    [JsonIgnore]
-    [ObservableProperty]
-    public partial GeneralOptions General { get; set; } = new();
-
-    [ObservableProperty]
-    public partial YoutubeOptions Youtube { get; set; } = new();
-
-    [ObservableProperty]
-    public partial AppearanceOptions Appearance { get; set; } = new();
-
-    [ObservableProperty]
-    public partial LoggingOptions Logging { get; set; } = new();
-
-    // Required for AutoInterface to see the methods
-    // ReSharper disable RedundantOverriddenMember
-    public override void Reset()
+    public SettingsService(IServiceProvider serviceProvider)
     {
-        base.Reset();
+        _serviceProvider = serviceProvider;
     }
 
-    public override void Save()
+    private static string FilePath => AppHelper.SettingsPath;
+
+    public void Save()
     {
-        base.Save();
-        Saved?.Invoke();
+        // 1. Clear previous state to prevent duplicate key errors on re-save
+        _rootMap.Clear();
+        _sectionMap.Clear();
+
+        // 2. Populate dictionaries via the Source Generator handler
+        GetOptions(_serviceProvider);
+
+        // 3. Create a master dictionary to merge Root properties and Section objects
+        var finalData = new Dictionary<string, object?>(_sectionMap);
+
+        // 4. Flatten root options into the master dictionary
+        foreach (var (instance, properties) in _rootMap)
+        {
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(instance);
+                finalData[prop.Name] = value;
+            }
+        }
+
+        // 5. Ensure directory exists
+        var dirPath = Path.GetDirectoryName(FilePath);
+        if (!string.IsNullOrWhiteSpace(dirPath))
+        {
+            Directory.CreateDirectory(dirPath);
+        }
+
+        // 6. Serialize and write safely
+        var jsonBytes = JsonSerializer.SerializeToUtf8Bytes(
+            finalData,
+            SettingsServiceSerializerContext.Default.Options
+        );
+        File.WriteAllBytes(FilePath, jsonBytes);
     }
 
-    public override bool Load()
+    [GenerateServiceRegistrations(
+        AttributeFilter = typeof(OptionAttribute),
+        CustomHandler = nameof(GetOptionsHandler)
+    )]
+    private partial void GetOptions(IServiceProvider serviceProvider);
+
+    private void GetOptionsHandler<T>(IServiceProvider serviceProvider)
+        where T : class
     {
-        var result = base.Load();
-        Loaded?.Invoke(result);
-        return result;
+        var option = serviceProvider.GetService<IOptions<T>>()?.Value;
+        if (option is null)
+            return;
+
+        var type = typeof(T);
+        var section = type.GetCustomAttribute<OptionAttribute>()?.Section;
+
+        if (section.IsNullOrWhiteSpace())
+        {
+            var propertyInfos = type.GetProperties();
+            _rootMap.Add(option, propertyInfos);
+        }
+        else
+        {
+            _sectionMap.Add(section, option);
+        }
     }
 
-    // ReSharper restore RedundantOverriddenMember
-
-    [JsonSerializable(typeof(SettingsService))]
-    private sealed partial class SettingServiceJsonSerializerContext : JsonSerializerContext;
+    [JsonSerializable(typeof(Dictionary<string, object?>))]
+    [JsonSerializable(typeof(AppearanceOptions))]
+    [JsonSerializable(typeof(GeneralOptions))]
+    [JsonSerializable(typeof(LoggingOptions))]
+    [JsonSerializable(typeof(YoutubeOptions))]
+    [JsonSourceGenerationOptions(WriteIndented = true, UseStringEnumConverter = true)]
+    private sealed partial class SettingsServiceSerializerContext : JsonSerializerContext;
 }

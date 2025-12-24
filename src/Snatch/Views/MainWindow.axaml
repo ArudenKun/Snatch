@@ -1,4 +1,4 @@
-<Window
+<suki:SukiWindow
     x:Class="Snatch.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,16 +6,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:snatch="https://github.com/arudenkun/Snatch"
     xmlns:suki="https://github.com/kikipoulet/SukiUI"
-    Title="YoutubeDownloader"
+    Title="{x:Static snatch:AppHelper.Name}"
     Width="1366"
     Height="768"
     d:DesignHeight="768"
     d:DesignWidth="1366"
     x:DataType="snatch:MainWindowViewModel"
-    CanMaximize="False"
+    BackgroundAnimationEnabled="{Binding AppearanceOptions.BackgroundAnimations}"
+    BackgroundStyle="{Binding AppearanceOptions.BackgroundStyle}"
+    BackgroundTransitionsEnabled="{Binding AppearanceOptions.BackgroundTransitions}"
+    CanMaximize="True"
     CanResize="True"
     Icon="/Assets/favicon.ico"
     WindowStartupLocation="CenterScreen"
+    WindowState="{Binding AppearanceOptions.LastWindowState}"
     mc:Ignorable="d">
     <suki:SukiWindow.Hosts>
         <suki:SukiDialogHost Manager="{Binding DialogManager}" />
@@ -29,19 +33,12 @@
             Source="/Assets/favicon.ico" />
     </suki:SukiWindow.LogoContent>
     <suki:SukiWindow.RightWindowTitleBarControls>
-        <!--  ReSharper disable Xaml.StyleClassNotFound  -->
-        <!--  <Button  -->
-        <!--  Classes="WindowControlsButton"  -->
-        <!--  Command="{Binding ShowPageCommand}"  -->
-        <!--  CommandParameter="{x:Type ava:AboutPageViewModel}"  -->
-        <!--  Content="{lucide:LucideIconContent Info}" />  -->
         <Button
             Classes="WindowControlsButton"
             Command="{Binding ShowPageCommand}"
             CommandParameter="{x:Type snatch:SettingsPageViewModel}"
             Content="{LucideIconContent Settings}"
             IsVisible="{Binding IsMainView}" />
-        <!--  ReSharper restore Xaml.StyleClassNotFound  -->
     </suki:SukiWindow.RightWindowTitleBarControls>
     <suki:SukiTransitioningContentControl Content="{Binding ContentViewModel}" />
-</Window>
+</suki:SukiWindow>

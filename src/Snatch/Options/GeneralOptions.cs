@@ -2,6 +2,7 @@
 
 namespace Snatch.Options;
 
+[Option("General")]
 public sealed partial class GeneralOptions : ObservableObject
 {
     [ObservableProperty]

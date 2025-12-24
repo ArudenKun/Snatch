@@ -11,11 +11,12 @@
     x:DataType="snatch:MainViewModel"
     mc:Ignorable="d">
     <suki:SukiSideMenu
+        Name="SideMenu"
         IsMenuExpanded="True"
         IsSearchEnabled="False"
         ItemsSource="{Binding Pages}"
         SelectedItem="{Binding Page}"
-        SidebarToggleEnabled="False">
+        SidebarToggleEnabled="True">
         <suki:SukiSideMenu.ItemTemplate>
             <DataTemplate>
                 <suki:SukiSideMenuItem

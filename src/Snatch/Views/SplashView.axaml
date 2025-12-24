@@ -18,7 +18,7 @@
                 Width="120"
                 Height="120"
                 VerticalAlignment="Center"
-                Source="/Assets/avalonia-logo.ico" />
+                Source="/Assets/favicon.png" />
         </StackPanel>
         <StackPanel
             Margin="40"

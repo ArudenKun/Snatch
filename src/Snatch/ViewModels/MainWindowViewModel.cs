@@ -9,22 +9,16 @@ using Volo.Abp.EventBus;
 
 namespace Snatch.ViewModels;
 
+[Dependency(ServiceLifetime.Singleton)]
 public sealed partial class MainWindowViewModel
     : ViewModel,
         ILocalEventHandler<SplashViewFinishedEventData>,
         ISingletonDependency
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public MainWindowViewModel(
-        ISukiToastManager toastManager,
-        ISukiDialogManager dialogManager,
-        IServiceProvider serviceProvider
-    )
+    public MainWindowViewModel(ISukiToastManager toastManager, ISukiDialogManager dialogManager)
     {
         ToastManager = toastManager;
         DialogManager = dialogManager;
-        _serviceProvider = serviceProvider;
     }
 
     public ISukiToastManager ToastManager { get; }
@@ -39,7 +33,7 @@ public sealed partial class MainWindowViewModel
 
     public override void OnLoaded()
     {
-        ContentViewModel = _serviceProvider.GetRequiredService<SplashViewModel>();
+        ContentViewModel = ServiceProvider.GetRequiredService<SplashViewModel>();
     }
 
     [RelayCommand(CanExecute = nameof(IsMainView))]
@@ -50,13 +44,7 @@ public sealed partial class MainWindowViewModel
 
     public Task HandleEventAsync(SplashViewFinishedEventData eventData)
     {
-        ContentViewModel = _serviceProvider.GetRequiredService<MainViewModel>();
+        ContentViewModel = ServiceProvider.GetRequiredService<MainViewModel>();
         return Task.CompletedTask;
     }
-
-    #region Update
-
-    private void Update() { }
-
-    #endregion
 }

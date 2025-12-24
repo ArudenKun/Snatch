@@ -5,6 +5,7 @@ using Snatch.Utilities;
 
 namespace Snatch.Options;
 
+[Option("Logging")]
 public sealed partial class LoggingOptions : ObservableObject
 {
     public const string Template =
@@ -14,7 +15,6 @@ public sealed partial class LoggingOptions : ObservableObject
     public partial long Size { get; set; }
 
     [ObservableProperty]
-    [JsonConverter(typeof(JsonStringEnumConverter<LogEventLevel>))]
     public partial LogEventLevel LogEventLevel { get; set; } =
         AppHelper.IsDebug ? LogEventLevel.Debug : LogEventLevel.Information;
 }

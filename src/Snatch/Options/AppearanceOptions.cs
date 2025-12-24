@@ -8,10 +8,10 @@ using SukiUI.Enums;
 
 namespace Snatch.Options;
 
+[Option("Appearance")]
 public sealed partial class AppearanceOptions : ObservableObject
 {
     [ObservableProperty]
-    [JsonConverter(typeof(JsonStringEnumConverter<Theme>))]
     public partial Theme Theme { get; set; } = Theme.System;
 
     [JsonIgnore]
@@ -33,12 +33,10 @@ public sealed partial class AppearanceOptions : ObservableObject
     public partial bool BackgroundTransitions { get; set; } = true;
 
     [ObservableProperty]
-    [JsonConverter(typeof(JsonStringEnumConverter<SukiBackgroundStyle>))]
     public partial SukiBackgroundStyle BackgroundStyle { get; set; } =
         SukiBackgroundStyle.GradientSoft;
 
     [ObservableProperty]
-    [JsonConverter(typeof(JsonStringEnumConverter<WindowState>))]
     public partial WindowState LastWindowState { get; set; } = WindowState.Normal;
 
     [ObservableProperty]

@@ -4,6 +4,7 @@ using R3.ObservableEvents;
 [assembly: GenerateStaticEventObservables(typeof(TaskScheduler))]
 [assembly: XmlnsDefinition("https://github.com/arudenkun/Snatch", "Snatch.Converters")]
 [assembly: XmlnsDefinition("https://github.com/arudenkun/Snatch", "Snatch.Models")]
+[assembly: XmlnsDefinition("https://github.com/arudenkun/Snatch", "Snatch.Utilities")]
 [assembly: XmlnsDefinition("https://github.com/arudenkun/Snatch", "Snatch.ViewModels")]
 [assembly: XmlnsDefinition("https://github.com/arudenkun/Snatch", "Snatch.ViewModels.Pages")]
 [assembly: XmlnsDefinition("https://github.com/arudenkun/Snatch", "Snatch.ViewModels.Dialogs")]

@@ -15,7 +15,7 @@ public abstract partial class PageViewModel : ViewModel, IPageViewModel
     /// <summary>
     /// The display name of the page.
     /// </summary>
-    public abstract string DisplayName { get; }
+    public virtual string DisplayName => GetType().Name.Replace("PageViewModel", string.Empty);
 
     /// <summary>
     /// The icon of the page.

@@ -1,57 +1,69 @@
-﻿using AutoInterfaceAttributes;
+﻿using System.Diagnostics;
+using AutoInterfaceAttributes;
 using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using R3;
+using Snatch.Options;
 using Snatch.Services;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus.Local;
 
 namespace Snatch.ViewModels;
 
-[AutoInterface(Inheritance = [typeof(IDisposable)])]
+[AutoInterface(Inheritance = [typeof(IDisposable), typeof(ITransientDependency)])]
 public abstract partial class ViewModel : ObservableValidator, IViewModel
 {
-    public required IAbpLazyServiceProvider LazyServiceProvider { protected get; init; }
+    public required IServiceProvider ServiceProvider { protected get; init; }
+    public required ITransientCachedServiceProvider CachedServiceProvider { protected get; init; }
 
     protected ILoggerFactory LoggerFactory =>
-        LazyServiceProvider.LazyGetRequiredService<ILoggerFactory>();
+        CachedServiceProvider.GetRequiredService<ILoggerFactory>();
 
     protected ILogger Logger =>
-        LazyServiceProvider.LazyGetService<ILogger>(_ =>
+        CachedServiceProvider.GetService<ILogger>(_ =>
             LoggerFactory.CreateLogger(GetType().FullName!)
         );
 
     public ILocalEventBus LocalEventBus =>
-        LazyServiceProvider.LazyGetRequiredService<ILocalEventBus>();
+        CachedServiceProvider.GetRequiredService<ILocalEventBus>();
 
-    public IToastService ToastService =>
-        LazyServiceProvider.LazyGetRequiredService<IToastService>();
+    public IToastService ToastService => CachedServiceProvider.GetRequiredService<IToastService>();
 
     public IDialogService DialogService =>
-        LazyServiceProvider.LazyGetRequiredService<IDialogService>();
+        CachedServiceProvider.GetRequiredService<IDialogService>();
 
     public SettingsService SettingsService =>
-        LazyServiceProvider.LazyGetRequiredService<SettingsService>();
+        CachedServiceProvider.GetRequiredService<SettingsService>();
 
-    public IThemeService ThemeService =>
-        LazyServiceProvider.LazyGetRequiredService<IThemeService>();
+    public IThemeService ThemeService => CachedServiceProvider.GetRequiredService<IThemeService>();
+
+    public GeneralOptions GeneralOptions =>
+        CachedServiceProvider.GetRequiredService<IOptions<GeneralOptions>>().Value;
+
+    public AppearanceOptions AppearanceOptions =>
+        CachedServiceProvider.GetRequiredService<IOptions<AppearanceOptions>>().Value;
+
+    public LoggingOptions LoggingOptions =>
+        CachedServiceProvider.GetRequiredService<IOptions<LoggingOptions>>().Value;
+
+    public YoutubeOptions YoutubeOptions =>
+        CachedServiceProvider.GetRequiredService<IOptions<YoutubeOptions>>().Value;
 
     public IStorageProvider StorageProvider =>
-        LazyServiceProvider.LazyGetRequiredService<IStorageProvider>();
+        CachedServiceProvider.GetRequiredService<IStorageProvider>();
 
-    public IClipboard Clipboard => LazyServiceProvider.LazyGetRequiredService<IClipboard>();
-    public ILauncher Launcher => LazyServiceProvider.LazyGetRequiredService<ILauncher>();
+    public IClipboard Clipboard => CachedServiceProvider.GetRequiredService<IClipboard>();
+    public ILauncher Launcher => CachedServiceProvider.GetRequiredService<ILauncher>();
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     public virtual partial bool IsBusy { get; set; }
 
     [ObservableProperty]
     public partial string IsBusyText { get; set; } = string.Empty;
-
-    public bool IsNotBusy => !IsBusy;
 
     public virtual void OnLoaded() { }
 
@@ -67,7 +79,10 @@ public abstract partial class ViewModel : ObservableValidator, IViewModel
         {
             await func();
         }
-        catch (Exception ex) when (LogException(ex, true, showException)) { }
+        catch (Exception ex) when (LogException(ex, true, showException))
+        {
+            // Not Used
+        }
         finally
         {
             IsBusy = false;
@@ -85,7 +100,7 @@ public abstract partial class ViewModel : ObservableValidator, IViewModel
         Logger.LogException(ex);
         if (shouldDisplay)
         {
-            // ToastService.ShowExceptionToast(ex, "Error", ex.ToStringDemystified());
+            ToastService.ShowExceptionToast(ex, "Error", ex.ToStringDemystified());
         }
 
         return shouldCatch;
@@ -95,7 +110,7 @@ public abstract partial class ViewModel : ObservableValidator, IViewModel
 
     // ReSharper disable once CollectionNeverQueried.Local
     private readonly CompositeDisposable _disposables = new();
-    protected bool IsDisposed { get; private set; }
+    private bool _disposed;
 
     ~ViewModel() => Dispose(false);
 
@@ -106,28 +121,29 @@ public abstract partial class ViewModel : ObservableValidator, IViewModel
         GC.SuppressFinalize(this);
     }
 
+    /// <inheritdoc cref="Dispose"/>>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            _disposables.Dispose();
+        }
+
+        _disposed = true;
+    }
+
     public void AddTo(IDisposable disposable)
     {
-        if (IsDisposed)
+        if (_disposed)
         {
             disposable.Dispose();
             return;
         }
 
         _disposables.Add(disposable);
-    }
-
-    /// <inheritdoc cref="Dispose"/>>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (IsDisposed)
-            return;
-
-        if (!disposing)
-            return;
-
-        _disposables.Dispose();
-        IsDisposed = true;
     }
 
     #endregion

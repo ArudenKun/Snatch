@@ -1,10 +1,13 @@
-﻿using Avalonia;
+﻿using System.Reflection;
+using Avalonia;
 using Humanizer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Events;
+using ServiceScan.SourceGenerator;
 using Snatch.Extensions;
 using Snatch.Hosting;
 using Snatch.Options;
@@ -14,7 +17,7 @@ using Velopack;
 
 namespace Snatch;
 
-public static class Bootstrap
+public static partial class Bootstrap
 {
     private static ILogger Logger => Log.ForContext("SourceContext", nameof(Snatch));
 
@@ -74,7 +77,7 @@ public static class Bootstrap
             hostBuilder
                 .ConfigureServices(services =>
                     services.AddSingleton(sp => new ObservableLoggingLevelSwitch(
-                        sp.GetRequiredService<SettingsService>()
+                        sp.GetRequiredService<IOptions<LoggingOptions>>().Value
                     ))
                 )
                 .UseSerilog(
@@ -94,13 +97,6 @@ public static class Bootstrap
                                 c.File(
                                     AppHelper.LogsDir.CombinePath("log.txt"),
                                     outputTemplate: LoggingOptions.Template,
-                                    fileSizeLimitBytes: sp.GetRequiredService<SettingsService>().Logging.Size
-                                    == 0
-                                        ? null
-                                        : (long)
-                                            sp.GetRequiredService<SettingsService>()
-                                                .Logging.Size.Megabytes()
-                                                .Bytes,
                                     retainedFileTimeLimit: 30.Days(),
                                     rollingInterval: RollingInterval.Day,
                                     rollOnFileSizeLimit: true,
@@ -112,6 +108,7 @@ public static class Bootstrap
 
         private IHostBuilder ConfigureConfiguration() =>
             hostBuilder
+                .ConfigureServices((ctx, services) => services.AddOptions(ctx.Configuration))
                 .ConfigureHostConfiguration(configHost =>
                     configHost
                         .AddConfiguration(
@@ -143,5 +140,22 @@ public static class Bootstrap
                     .UseR3(exception => Logger.Fatal(exception, "R3 Unhandled Exception"))
                     .LogToTrace();
             });
+    }
+
+    [GenerateServiceRegistrations(
+        AttributeFilter = typeof(OptionAttribute),
+        CustomHandler = nameof(AddOption)
+    )]
+    public static partial IServiceCollection AddOptions(
+        this IServiceCollection services,
+        IConfiguration configuration
+    );
+
+    private static void AddOption<T>(IServiceCollection services, IConfiguration configuration)
+        where T : class
+    {
+        var sectionKey = typeof(T).GetCustomAttribute<OptionAttribute>()?.Section;
+        var section = sectionKey is null ? configuration : configuration.GetSection(sectionKey);
+        services.Configure<T>(section);
     }
 }

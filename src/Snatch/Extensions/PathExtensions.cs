@@ -28,13 +28,10 @@ public static class PathExtensions
         }
     }
 
-    extension(string path)
+    public static string CombinePath(this string path, params string[] parts)
     {
-        public string CombinePath(params string[] parts)
-        {
-            var paths = new List<string> { path };
-            paths.AddRange(parts);
-            return Path.Combine([.. paths]);
-        }
+        var paths = new List<string> { path };
+        paths.AddRange(parts);
+        return Path.Combine([.. paths]);
     }
 }
