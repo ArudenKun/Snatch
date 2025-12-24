@@ -1,10 +1,8 @@
 ﻿using AutoInterfaceAttributes;
-using Avalonia.Controls.Notifications;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using Snatch.Models;
+using ShadUI;
 using Snatch.ViewModels.Dialogs;
-using SukiUI.Dialogs;
 using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Services;
@@ -13,9 +11,9 @@ namespace Snatch.Services;
 [UsedImplicitly]
 public sealed class DialogService : IDialogService, ISingletonDependency
 {
-    private readonly ISukiDialogManager _manager;
+    private readonly DialogManager _manager;
 
-    public DialogService(ISukiDialogManager manager, IServiceProvider serviceProvider)
+    public DialogService(DialogManager manager, IServiceProvider serviceProvider)
     {
         _manager = manager;
         ServiceProvider = serviceProvider;
@@ -23,106 +21,36 @@ public sealed class DialogService : IDialogService, ISingletonDependency
 
     public IServiceProvider ServiceProvider { get; }
 
-    public SukiDialogBuilder CreateDialog(
-        string? title,
-        string content,
-        bool showBackground,
-        bool dismissOnClick,
-        Action<ISukiDialog> onDismiss,
-        params IEnumerable<DialogActionButton> buttons
-    )
-    {
-        var dialog = _manager.CreateDialog().WithContent(content);
-        dialog.SetCanDismissWithBackgroundClick(dismissOnClick);
-        dialog.ShowCardBackground(showBackground);
-        dialog.OnDismissed(onDismiss);
-        foreach (var actionButton in buttons)
-        {
-            dialog.AddActionButton(
-                actionButton.ButtonContent,
-                actionButton.OnClicked,
-                actionButton.DismissOnClick,
-                actionButton.Classes
-            );
-        }
-
-        return dialog;
-    }
-
-    public SukiDialogBuilder CreateMessageBox(
+    public SimpleDialogBuilder CreateMessageBox(
         string title,
         string message,
-        NotificationType type,
-        bool canDismissWithBackgroundClick
+        bool canDismissWithBackgroundClick,
+        bool destructive = false
     )
     {
-        var builder = _manager.CreateDialog().OfType(type).WithTitle(title).WithContent(message);
+        var builder = _manager.CreateDialog(title, message);
+
         if (canDismissWithBackgroundClick)
         {
-            builder.Dismiss().ByClickingBackground();
+            builder.Dismissible();
         }
+
+        builder.WithPrimaryButton(
+            "Ok",
+            null,
+            destructive ? DialogButtonStyle.Destructive : DialogButtonStyle.Primary
+        );
 
         return builder;
     }
 
-    public void ShowMessageBox(
-        string title,
-        string message,
-        NotificationType type,
-        bool canDismissWithBackgroundClick
-    )
+    public void ShowMessageBox(string title, string message, bool canDismissWithBackgroundClick)
     {
-        CreateMessageBox(title, message, type, canDismissWithBackgroundClick).TryShow();
-    }
-
-    public void ShowInformationMessageBox(
-        string title,
-        string message,
-        bool canDismissWithBackgroundClick = true
-    )
-    {
-        ShowMessageBox(title, message, NotificationType.Information, canDismissWithBackgroundClick);
-    }
-
-    public void ShowSuccessMessageBox(
-        string title,
-        string message,
-        bool canDismissWithBackgroundClick = true
-    )
-    {
-        ShowMessageBox(title, message, NotificationType.Success, canDismissWithBackgroundClick);
-    }
-
-    public void ShowWarningMessageBox(
-        string title,
-        string message,
-        bool canDismissWithBackgroundClick = true
-    )
-    {
-        ShowMessageBox(title, message, NotificationType.Warning, canDismissWithBackgroundClick);
-    }
-
-    public void ShowErrorMessageBox(
-        string title,
-        string message,
-        bool canDismissWithBackgroundClick = true
-    )
-    {
-        ShowMessageBox(title, message, NotificationType.Error, canDismissWithBackgroundClick);
+        CreateMessageBox(title, message, canDismissWithBackgroundClick).Show();
     }
 
     public void ShowDialog<TViewModel>(TViewModel viewModel)
-        where TViewModel : DialogViewModel
-    {
-        _manager
-            .CreateDialog()
-            .WithViewModel(d =>
-            {
-                viewModel.SetDialog(d);
-                return viewModel;
-            })
-            .TryShow();
-    }
+        where TViewModel : DialogViewModel => _manager.CreateDialog(viewModel).Show();
 
     public void ShowDialog<TViewModel>()
         where TViewModel : DialogViewModel =>
@@ -130,15 +58,8 @@ public sealed class DialogService : IDialogService, ISingletonDependency
 
     public async Task<TResult?> ShowDialogAsync<TResult>(DialogViewModel<TResult> viewModel)
     {
-        var builder = _manager
-            .CreateDialog()
-            .WithViewModel(d =>
-            {
-                viewModel.SetDialog(d);
-                return viewModel;
-            });
-        builder.Completion = viewModel.Completion;
-        await builder.TryShowAsync();
+        _manager.CreateDialog(viewModel).Show();
+        await viewModel.Completion.Task;
         return viewModel.DialogResult;
     }
 }

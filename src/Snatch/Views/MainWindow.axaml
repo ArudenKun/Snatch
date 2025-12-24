@@ -1,44 +1,28 @@
-<suki:SukiWindow
+<shadui:Window
     x:Class="Snatch.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shadui="using:ShadUI"
     xmlns:snatch="https://github.com/arudenkun/Snatch"
-    xmlns:suki="https://github.com/kikipoulet/SukiUI"
     Title="{x:Static snatch:AppHelper.Name}"
     Width="1366"
     Height="768"
     d:DesignHeight="768"
     d:DesignWidth="1366"
     x:DataType="snatch:MainWindowViewModel"
-    BackgroundAnimationEnabled="{Binding AppearanceOptions.BackgroundAnimations}"
-    BackgroundStyle="{Binding AppearanceOptions.BackgroundStyle}"
-    BackgroundTransitionsEnabled="{Binding AppearanceOptions.BackgroundTransitions}"
     CanMaximize="True"
     CanResize="True"
     Icon="/Assets/favicon.ico"
     WindowStartupLocation="CenterScreen"
     WindowState="{Binding AppearanceOptions.LastWindowState}"
     mc:Ignorable="d">
-    <suki:SukiWindow.Hosts>
-        <suki:SukiDialogHost Manager="{Binding DialogManager}" />
-        <suki:SukiToastHost Manager="{Binding ToastManager}" />
-    </suki:SukiWindow.Hosts>
-    <suki:SukiWindow.LogoContent>
-        <Image
-            Width="20"
-            Height="20"
-            VerticalAlignment="Center"
-            Source="/Assets/favicon.ico" />
-    </suki:SukiWindow.LogoContent>
-    <suki:SukiWindow.RightWindowTitleBarControls>
-        <Button
-            Classes="WindowControlsButton"
-            Command="{Binding ShowPageCommand}"
-            CommandParameter="{x:Type snatch:SettingsPageViewModel}"
-            Content="{LucideIconContent Settings}"
-            IsVisible="{Binding IsMainView}" />
-    </suki:SukiWindow.RightWindowTitleBarControls>
-    <suki:SukiTransitioningContentControl Content="{Binding ContentViewModel}" />
-</suki:SukiWindow>
+    <shadui:Window.Hosts>
+        <shadui:DialogHost
+            Manager="{Binding DialogManager}"
+            Owner="{Binding RelativeSource={RelativeSource AncestorType=shadui:Window}}" />
+        <shadui:ToastHost Manager="{Binding ToastManager}" />
+    </shadui:Window.Hosts>
+    <ContentControl Content="{Binding ContentViewModel}" />
+</shadui:Window>

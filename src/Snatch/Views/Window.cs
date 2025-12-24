@@ -1,12 +1,12 @@
 ﻿using Avalonia.Interactivity;
+using ShadUI;
 using Snatch.Utilities;
 using Snatch.ViewModels;
-using SukiUI.Controls;
 using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Views;
 
-public abstract class SukiWindow<TViewModel> : SukiWindow, IView<TViewModel>, ITransientDependency
+public abstract class Window<TViewModel> : Window, IView<TViewModel>, ITransientDependency
     where TViewModel : ViewModel
 {
     public new TViewModel DataContext

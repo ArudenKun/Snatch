@@ -39,8 +39,6 @@ public abstract partial class ViewModel : ObservableValidator, IViewModel
     public SettingsService SettingsService =>
         CachedServiceProvider.GetRequiredService<SettingsService>();
 
-    public IThemeService ThemeService => CachedServiceProvider.GetRequiredService<IThemeService>();
-
     public GeneralOptions GeneralOptions =>
         CachedServiceProvider.GetRequiredService<IOptions<GeneralOptions>>().Value;
 

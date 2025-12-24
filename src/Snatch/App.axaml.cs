@@ -5,13 +5,17 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using R3;
 using R3.ObservableEvents;
+using ShadUI;
+using Snatch.Options;
 using Snatch.Services;
 using Snatch.Utilities;
 using Snatch.ViewModels;
 using Volo.Abp.DependencyInjection;
 using ZLinq;
+using Window = Avalonia.Controls.Window;
 
 namespace Snatch;
 
@@ -21,7 +25,7 @@ public sealed class App : Application, IDisposable, ISingletonDependency
     private readonly ViewLocator _viewLocator;
     private readonly IToastService _toastService;
     private readonly ILoggerFactory _loggerFactory;
-    private readonly IThemeService _themeService;
+    private readonly AppearanceOptions _appearanceOptions;
 
     private IDisposable? _subscriptions;
 
@@ -30,23 +34,20 @@ public sealed class App : Application, IDisposable, ISingletonDependency
         ViewLocator viewLocator,
         IToastService toastService,
         ILoggerFactory loggerFactory,
-        IThemeService themeService
+        IOptions<AppearanceOptions> appearanceOptions
     )
     {
         _mainWindowViewModel = mainWindowViewModel;
         _viewLocator = viewLocator;
         _toastService = toastService;
         _loggerFactory = loggerFactory;
-        _themeService = themeService;
+        _appearanceOptions = appearanceOptions.Value;
     }
 
     // ReSharper disable once ArrangeModifiersOrder
     public static new App Current =>
         (App?)Application.Current
-        ?? throw new ArgumentNullException(
-            nameof(Application.Current),
-            "Application is not yet initialized"
-        );
+        ?? throw new InvalidOperationException("Application is not yet initialized");
 
     public static TopLevel TopLevel { get; private set; } = null!;
 
@@ -54,7 +55,13 @@ public sealed class App : Application, IDisposable, ISingletonDependency
     {
         AvaloniaXamlLoader.Load(this);
         DataTemplates.Add(_viewLocator);
-        _themeService.Initialize();
+
+        var themeWatcher = new ThemeWatcher(this);
+        themeWatcher.Initialize();
+
+        _appearanceOptions
+            .ObservePropertyChanged(x => x.Theme)
+            .Subscribe(x => themeWatcher.SwitchTheme(x));
 
         _subscriptions = Disposable.Combine(
             AppDomain
@@ -87,11 +94,7 @@ public sealed class App : Application, IDisposable, ISingletonDependency
             var window = _viewLocator.CreateView(_mainWindowViewModel) as Window;
             desktop.MainWindow = window;
             TopLevel =
-                window
-                ?? throw new ArgumentNullException(
-                    nameof(Application.Current),
-                    "Application is not yet initialized"
-                );
+                window ?? throw new InvalidOperationException("Application is not yet initialized");
         }
 
         base.OnFrameworkInitializationCompleted();

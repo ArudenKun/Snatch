@@ -2,10 +2,9 @@
 using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using ShadUI;
 using Snatch.Services;
 using Snatch.Views;
-using SukiUI.Dialogs;
-using SukiUI.Toasts;
 using Volo.Abp;
 using Volo.Abp.Autofac;
 using Volo.Abp.EventBus;
@@ -23,8 +22,8 @@ public sealed class SnatchModule : AbpModule
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        context.Services.AddSingleton<ISukiToastManager, SukiToastManager>();
-        context.Services.AddSingleton<ISukiDialogManager, SukiDialogManager>();
+        context.Services.AddSingleton<ToastManager>();
+        context.Services.AddSingleton<DialogManager>();
     }
 
     public override void PostConfigureServices(ServiceConfigurationContext context)

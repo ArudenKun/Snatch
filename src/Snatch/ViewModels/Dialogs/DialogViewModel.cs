@@ -1,7 +1,6 @@
 ﻿using AutoInterfaceAttributes;
 using CommunityToolkit.Mvvm.Input;
-using SukiUI.Controls;
-using SukiUI.Dialogs;
+using ShadUI;
 
 namespace Snatch.ViewModels.Dialogs;
 
@@ -12,14 +11,9 @@ public abstract partial class DialogViewModel<TResult> : ViewModel, IDialogViewM
 {
     private bool _isResultSet;
 
-    protected DialogViewModel()
-    {
-        Dialog = new SukiDialog();
-    }
+    public required DialogManager DialogManager { protected get; init; }
 
     public TaskCompletionSource<bool> Completion { get; private set; } = new();
-
-    protected ISukiDialog Dialog { get; private set; }
 
     public TResult? DialogResult { get; private set; }
 
@@ -44,12 +38,7 @@ public abstract partial class DialogViewModel<TResult> : ViewModel, IDialogViewM
         DialogResult = result;
         Completion.SetResult(result is not null);
         _isResultSet = true;
-        Dialog.Dismiss();
-    }
-
-    public void SetDialog(ISukiDialog dialog)
-    {
-        Dialog = dialog;
+        DialogManager.Close(this, new CloseDialogOptions { Success = true });
     }
 
     protected void Reset()

@@ -1,9 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using ShadUI;
 using Snatch.Models.EventData;
-using SukiUI.Dialogs;
-using SukiUI.Toasts;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus;
 
@@ -15,14 +14,14 @@ public sealed partial class MainWindowViewModel
         ILocalEventHandler<SplashViewFinishedEventData>,
         ISingletonDependency
 {
-    public MainWindowViewModel(ISukiToastManager toastManager, ISukiDialogManager dialogManager)
+    public MainWindowViewModel(ToastManager toastManager, DialogManager dialogManager)
     {
         ToastManager = toastManager;
         DialogManager = dialogManager;
     }
 
-    public ISukiToastManager ToastManager { get; }
-    public ISukiDialogManager DialogManager { get; }
+    public ToastManager ToastManager { get; }
+    public DialogManager DialogManager { get; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsMainView))]

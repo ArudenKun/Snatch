@@ -1,33 +1,21 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using SukiUI.Enums;
-using SukiUI.Toasts;
 
 namespace Snatch.Models;
 
 public class ToastActionButton
 {
-    public required object ButtonContent { get; init; }
-    public Action<ISukiToast> OnClicked { get; init; } = _ => { };
-    public bool DismissOnClick { get; init; }
-    public SukiButtonStyles Styles { get; init; } = SukiButtonStyles.Flat;
+    public required string Label { get; init; }
+    public Action OnClicked { get; init; } = () => { };
 
     public ToastActionButton() { }
 
     [SetsRequiredMembers]
-    public ToastActionButton(
-        object buttonContent,
-        Action<ISukiToast>? onClicked = null,
-        bool dismissOnClick = false,
-        SukiButtonStyles styles = SukiButtonStyles.Flat
-    )
+    public ToastActionButton(string label, Action? onClicked = null)
     {
-        ButtonContent = buttonContent;
+        Label = label;
         if (onClicked is not null)
         {
             OnClicked = onClicked;
         }
-
-        DismissOnClick = dismissOnClick;
-        Styles = styles;
     }
 }

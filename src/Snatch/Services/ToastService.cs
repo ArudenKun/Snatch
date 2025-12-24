@@ -2,9 +2,9 @@
 using Avalonia.Controls.Notifications;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
+using ShadUI;
 using Snatch.Models;
 using Snatch.Options;
-using SukiUI.Toasts;
 using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Services;
@@ -13,10 +13,10 @@ namespace Snatch.Services;
 [UsedImplicitly]
 public sealed class ToastService : IToastService, ISingletonDependency
 {
-    private readonly ISukiToastManager _manager;
+    private readonly ToastManager _manager;
     private readonly AppearanceOptions _options;
 
-    public ToastService(ISukiToastManager manager, IOptions<AppearanceOptions> options)
+    public ToastService(ToastManager manager, IOptions<AppearanceOptions> options)
     {
         _manager = manager;
         _options = options.Value;
@@ -28,123 +28,121 @@ public sealed class ToastService : IToastService, ISingletonDependency
     /// <param name="title"></param>
     /// <param name="content"></param>
     /// <param name="autoDismiss"></param>
-    /// <param name="buttons"></param>
+    /// <param name="actionButton"></param>
     /// <returns></returns>
-    public SukiToastBuilder CreateToast(
+    public ToastBuilder CreateToast(
         string? title,
         string content,
         bool autoDismiss,
-        params IEnumerable<ToastActionButton> buttons
+        ToastActionButton? actionButton = null
     )
     {
-        var toast = _manager.CreateToast().WithContent(content);
+        ToastBuilder toast;
+        if (string.IsNullOrWhiteSpace(title) || string.IsNullOrEmpty(title))
+        {
+            toast = _manager.CreateToast(content);
+        }
+        else
+        {
+            toast = _manager.CreateToast(title).WithContent(content);
+        }
 
         if (autoDismiss)
         {
-            toast.SetCanDismissByClicking(true);
-            toast.SetDismissAfter(_options.ToastDuration);
+            toast.DismissOnClick();
         }
 
-        if (!string.IsNullOrWhiteSpace(title))
+        toast.WithDelay(_options.ToastDuration.Seconds);
+        if (actionButton is not null)
         {
-            toast.SetTitle(title);
-        }
-
-        foreach (var actionButton in buttons)
-        {
-            toast.AddActionButton(
-                actionButton.ButtonContent,
-                actionButton.OnClicked,
-                actionButton.DismissOnClick,
-                actionButton.Styles
-            );
+            toast.WithAction(actionButton.Label, actionButton.OnClicked);
         }
 
         return toast;
     }
 
-    public SukiToastBuilder CreateToast(
+    public ToastBuilder CreateToast(
         string? title,
         string content,
-        params IEnumerable<ToastActionButton> buttons
-    ) => CreateToast(title, content, true, buttons);
+        ToastActionButton? actionButton = null
+    ) => CreateToast(title, content, true, actionButton);
 
-    public SukiToastBuilder CreateToast(
+    public void ShowToast(
+        string title,
+        string content,
+        bool autoDismiss = true,
+        ToastActionButton? actionButton = null
+    ) => CreateToast(title, content, autoDismiss, actionButton).Show();
+
+    public void ShowToast(string title, string content, ToastActionButton? actionButton = null) =>
+        CreateToast(title, content, true, actionButton).Show();
+
+    public void ShowToast(
         NotificationType type,
         string? title,
         string content,
         bool autoDismiss,
-        params IEnumerable<ToastActionButton> buttons
+        ToastActionButton? actionButton = null
     )
     {
-        var toast = CreateToast(title, content, autoDismiss, buttons);
-        toast.SetType(type);
-        return toast;
+        var toast = CreateToast(title, content, autoDismiss, actionButton);
+        switch (type)
+        {
+            case NotificationType.Information:
+                toast.ShowInfo();
+                break;
+            case NotificationType.Error:
+                toast.ShowError();
+                break;
+            case NotificationType.Warning:
+                toast.ShowWarning();
+                break;
+            case NotificationType.Success:
+                toast.ShowSuccess();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(type),
+                    type,
+                    "Not valid notification type"
+                );
+        }
     }
 
-    public SukiToastBuilder CreateToast(
-        NotificationType type,
-        string? title,
-        string content,
-        params IEnumerable<ToastActionButton> buttons
-    ) => CreateToast(type, title, content, true, buttons);
-
-    public void ShowToast(
-        string title,
-        string content,
-        bool autoDismiss = true,
-        params IEnumerable<ToastActionButton> buttons
-    ) => CreateToast(title, content, autoDismiss, buttons).Queue();
-
-    public void ShowToast(
-        string title,
-        string content,
-        params IEnumerable<ToastActionButton> buttons
-    ) => CreateToast(title, content, true, buttons).Queue();
-
     public void ShowToast(
         NotificationType type,
         string? title,
         string content,
-        bool autoDismiss,
-        params IEnumerable<ToastActionButton> buttons
-    ) => CreateToast(type, title, content, autoDismiss, buttons).Queue();
-
-    public void ShowToast(
-        NotificationType type,
-        string? title,
-        string content,
-        params IEnumerable<ToastActionButton> buttons
-    ) => CreateToast(type, title, content, true, buttons).Queue();
+        ToastActionButton? actionButton = null
+    ) => ShowToast(type, title, content, true, actionButton);
 
     public void ShowExceptionToast(
         string? title,
         string content,
         bool autoDismiss = true,
-        params IEnumerable<ToastActionButton> buttons
-    ) => CreateToast(NotificationType.Error, title, content, autoDismiss, buttons).Queue();
+        ToastActionButton? actionButton = null
+    ) => ShowToast(NotificationType.Error, title, content, autoDismiss, actionButton);
 
     public void ShowExceptionToast(
         string? title,
         string content,
-        params IEnumerable<ToastActionButton> buttons
-    ) => ShowExceptionToast(title, content, true, buttons);
+        ToastActionButton? actionButton = null
+    ) => ShowExceptionToast(title, content, true, actionButton);
 
     public void ShowExceptionToast(
         Exception ex,
         string? title = null,
         string? content = null,
         bool autoDismiss = true,
-        params IEnumerable<ToastActionButton> buttons
+        ToastActionButton? actionButton = null
     ) =>
-        CreateToast(
-                NotificationType.Error,
-                title,
-                string.IsNullOrWhiteSpace(content)
-                    ? ex.Message
-                    : $"{content}{Environment.NewLine}{ex.Message}",
-                autoDismiss,
-                buttons
-            )
-            .Queue();
+        ShowToast(
+            NotificationType.Error,
+            title,
+            string.IsNullOrWhiteSpace(content)
+                ? ex.Message
+                : $"{content}{Environment.NewLine}{ex.Message}",
+            autoDismiss,
+            actionButton
+        );
 }

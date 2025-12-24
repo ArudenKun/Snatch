@@ -1,12 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using SukiUI.Dialogs;
 
 namespace Snatch.Models;
 
 public class DialogActionButton
 {
     public required object ButtonContent { get; init; }
-    public Action<ISukiDialog> OnClicked { get; init; } = _ => { };
+    public Action OnClicked { get; init; } = () => { };
     public bool DismissOnClick { get; init; }
     public string[] Classes { get; init; } = [];
 
@@ -15,7 +14,7 @@ public class DialogActionButton
     [SetsRequiredMembers]
     public DialogActionButton(
         object buttonContent,
-        Action<ISukiDialog>? onClicked = null,
+        Action? onClicked = null,
         bool dismissOnClick = false,
         string[]? classes = null
     )

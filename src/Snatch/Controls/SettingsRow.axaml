@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shadUi="clr-namespace:ShadUI;assembly=ShadUI"
     xmlns:snatch="https://github.com/arudenkun/Snatch"
-    xmlns:suki="https://github.com/kikipoulet/SukiUI"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -30,7 +30,7 @@
         <Style Selector="snatch|SettingsRow">
             <Setter Property="Template">
                 <ControlTemplate>
-                    <suki:GlassCard
+                    <shadUi:Card
                         Height="72"
                         MinWidth="148"
                         Padding="16"
@@ -79,7 +79,7 @@
                                 Content="{TemplateBinding Content,
                                                           Mode=OneWay}" />
                         </Grid>
-                    </suki:GlassCard>
+                    </shadUi:Card>
                 </ControlTemplate>
             </Setter>
         </Style>

@@ -102,14 +102,6 @@
                             PlaceholderText="Theme"
                             SelectedItem="{Binding AppearanceOptions.Theme}" />
                     </snatch:SettingsRow>
-                    <snatch:SettingsRow
-                        Description="Test Description"
-                        Header="Theme Color"
-                        IconKind="Palette">
-                        <ComboBox
-                            ItemsSource="{Binding ColorThemes}"
-                            SelectedItem="{Binding AppearanceOptions.ThemeColor}" />
-                    </snatch:SettingsRow>
                 </StackPanel>
             </TabItem>
         </TabControl>

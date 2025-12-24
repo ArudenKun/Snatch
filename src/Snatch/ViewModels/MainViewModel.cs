@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Snatch.Models.EventData;
 using Snatch.ViewModels.Pages;
@@ -12,8 +13,6 @@ namespace Snatch.ViewModels;
 [Dependency(ServiceLifetime.Singleton)]
 public sealed partial class MainViewModel : ViewModel, ILocalEventHandler<ShowPageEventData>
 {
-    private readonly Dictionary<Type, int> _pageIndexMap;
-
     public MainViewModel(IEnumerable<IPageViewModel> pageViewModels)
     {
         // 1. We create the initial structure based on the injected services.
@@ -25,13 +24,6 @@ public sealed partial class MainViewModel : ViewModel, ILocalEventHandler<ShowPa
             .ToArray();
 
         Pages.AddRange(orderedPages);
-
-        // 2. Cache the index of each type for O(1) lookups during navigation
-        _pageIndexMap = orderedPages
-            .Select((vm, index) => new { Type = vm.GetType(), Index = index })
-            .ToDictionary(x => x.Type, x => x.Index);
-
-        Page = Pages[0];
     }
 
     public IAvaloniaList<PageViewModel> Pages { get; } = new AvaloniaList<PageViewModel>();
@@ -39,22 +31,15 @@ public sealed partial class MainViewModel : ViewModel, ILocalEventHandler<ShowPa
     [ObservableProperty]
     public partial PageViewModel Page { get; set; }
 
-    partial void OnPageChanged(PageViewModel value) { }
-
     public Task HandleEventAsync(ShowPageEventData eventData)
     {
-        HandlePageChanged(eventData.ViewModelType);
+        ChangePage(eventData.ViewModelType);
         return Task.CompletedTask;
     }
 
-    private void HandlePageChanged(Type viewModelType)
+    [RelayCommand]
+    private void ChangePage(Type viewModelType)
     {
-        // 1. Check if we know this page type
-        if (!_pageIndexMap.TryGetValue(viewModelType, out var index))
-        {
-            return;
-        }
-
         // 2. Resolve the instance from DI.
         // - If registered as Singleton: Returns the existing instance.
         // - If registered as Transient: Returns a NEW instance (Data Reset).
@@ -62,7 +47,7 @@ public sealed partial class MainViewModel : ViewModel, ILocalEventHandler<ShowPa
 
         // 3. Handle Cleanup (Crucial for Transient ViewModels)
         // If the old instance in the list is different from the new one, and it's disposable, dispose it.
-        var oldPage = Pages[index];
+        var oldPage = Page;
         if (!ReferenceEquals(oldPage, newPage) && oldPage is IDisposable disposableVm)
         {
             disposableVm.Dispose();
@@ -71,6 +56,6 @@ public sealed partial class MainViewModel : ViewModel, ILocalEventHandler<ShowPa
         // 4. Update the Collection
         // We replace the item at the specific index. This notifies the UI (Tabs/ListBox)
         // that the content for this slot has changed without rebuilding the whole list.
-        Page = Pages[index] = newPage;
+        Page = newPage;
     }
 }

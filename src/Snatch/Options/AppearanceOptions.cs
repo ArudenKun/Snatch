@@ -1,10 +1,7 @@
-﻿using System.Text.Json.Serialization;
-using Avalonia.Controls;
-using Avalonia.Styling;
+﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Humanizer;
-using Snatch.Models;
-using SukiUI.Enums;
+using ShadUI;
 
 namespace Snatch.Options;
 
@@ -12,29 +9,13 @@ namespace Snatch.Options;
 public sealed partial class AppearanceOptions : ObservableObject
 {
     [ObservableProperty]
-    public partial Theme Theme { get; set; } = Theme.System;
-
-    [JsonIgnore]
-    public ThemeVariant ThemeVariant =>
-        Theme switch
-        {
-            Theme.Light => ThemeVariant.Light,
-            Theme.Dark => ThemeVariant.Dark,
-            _ => ThemeVariant.Default,
-        };
-
-    [ObservableProperty]
-    public partial string ThemeColor { get; set; } = string.Empty;
+    public partial ThemeMode Theme { get; set; } = ThemeMode.System;
 
     [ObservableProperty]
     public partial bool BackgroundAnimations { get; set; } = true;
 
     [ObservableProperty]
     public partial bool BackgroundTransitions { get; set; } = true;
-
-    [ObservableProperty]
-    public partial SukiBackgroundStyle BackgroundStyle { get; set; } =
-        SukiBackgroundStyle.GradientSoft;
 
     [ObservableProperty]
     public partial WindowState LastWindowState { get; set; } = WindowState.Normal;

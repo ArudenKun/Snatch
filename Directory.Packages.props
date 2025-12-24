@@ -35,7 +35,7 @@
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageVersion Include="ServiceScan.SourceGenerator" Version="2.4.1" />
-    <PackageVersion Include="SukiUI.Dock" Version="6.0.3" />
+    <PackageVersion Include="ShadUI" Version="0.1.5" />
     <PackageVersion Include="TrailBase" Version="0.5.0" />
     <PackageVersion Include="Velopack" Version="0.0.1298" />
     <PackageVersion Include="Volo.Abp.Autofac" Version="10.0.1" />

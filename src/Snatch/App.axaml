@@ -2,12 +2,12 @@
     x:Class="Snatch.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:suki="https://github.com/kikipoulet/SukiUI"
+    xmlns:shadUi="clr-namespace:ShadUI;assembly=ShadUI"
     RequestedThemeVariant="Default">
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.Styles>
-        <suki:SukiTheme ThemeColor="Blue" />
+        <shadUi:ShadTheme />
         <StyleInclude Source="/SnatchStyles.axaml" />
     </Application.Styles>
 </Application>

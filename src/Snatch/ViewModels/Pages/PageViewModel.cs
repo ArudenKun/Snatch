@@ -22,6 +22,8 @@ public abstract partial class PageViewModel : ViewModel, IPageViewModel
     /// </summary>
     public abstract LucideIconKind IconKind { get; }
 
+    public Type ViewModelType => GetType();
+
     /// <summary>
     /// The visibility of the page on the side menu.
     /// </summary>
