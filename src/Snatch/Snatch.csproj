@@ -24,6 +24,7 @@
     </PackageReference>
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" PrivateAssets="all" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Flowery.NET" />
     <PackageReference Include="HotAvalonia" PrivateAssets="all" />
     <PackageReference Include="Lucide.Avalonia" />
     <PackageReference Include="MonoMod.RuntimeDetour" PrivateAssets="all" />
@@ -38,7 +39,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SukiUI.Dock" />
     <PackageReference Include="Velopack" />
     <PackageReference Include="Volo.Abp.EventBus" />
   </ItemGroup>
