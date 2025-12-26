@@ -1,7 +1,6 @@
 ﻿using AutoInterfaceAttributes;
 using Avalonia.Controls.Notifications;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Options;
 using Snatch.Models;
 using Snatch.Options;
 using SukiUI.Toasts;
@@ -16,10 +15,10 @@ public sealed class ToastService : IToastService, ISingletonDependency
     private readonly ISukiToastManager _manager;
     private readonly AppearanceOptions _options;
 
-    public ToastService(ISukiToastManager manager, IOptions<AppearanceOptions> options)
+    public ToastService(ISukiToastManager manager, AppearanceOptions options)
     {
         _manager = manager;
-        _options = options.Value;
+        _options = options;
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 ﻿using ZLinq;
 
-namespace Snatch.Extensions;
+namespace Snatch.Utilities.Extensions;
 
 public static class EnumExtensions
 {

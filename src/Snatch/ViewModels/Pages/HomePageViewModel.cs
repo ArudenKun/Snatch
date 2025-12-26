@@ -1,9 +1,10 @@
-﻿using Lucide.Avalonia;
+﻿using CommunityToolkit.Mvvm.Input;
+using Lucide.Avalonia;
 using Microsoft.Extensions.Logging;
 
 namespace Snatch.ViewModels.Pages;
 
-public sealed class HomePageViewModel : PageViewModel
+public sealed partial class HomePageViewModel : PageViewModel
 {
     public override int Index => 1;
     public override LucideIconKind IconKind => LucideIconKind.House;
@@ -20,5 +21,10 @@ public sealed class HomePageViewModel : PageViewModel
         Logger.LogInformation($"{nameof(HomePageViewModel)} {nameof(OnUnloaded)}");
     }
 
-    private void Reset() { }
+    [RelayCommand]
+    private void Log()
+    {
+        var randomLevel = (LogLevel)Random.Shared.Next(0, 6);
+        Logger.Log(randomLevel, "{Guid}", Guid.CreateVersion7());
+    }
 }

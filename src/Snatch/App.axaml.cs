@@ -22,6 +22,7 @@ public sealed class App : Application, IDisposable, ISingletonDependency
     private readonly IToastService _toastService;
     private readonly ILoggerFactory _loggerFactory;
     private readonly IThemeService _themeService;
+    private readonly ListenerLogEventSink _listenerLogEventSink;
 
     private IDisposable? _subscriptions;
 
@@ -30,7 +31,8 @@ public sealed class App : Application, IDisposable, ISingletonDependency
         ViewLocator viewLocator,
         IToastService toastService,
         ILoggerFactory loggerFactory,
-        IThemeService themeService
+        IThemeService themeService,
+        ListenerLogEventSink listenerLogEventSink
     )
     {
         _mainWindowViewModel = mainWindowViewModel;
@@ -38,15 +40,15 @@ public sealed class App : Application, IDisposable, ISingletonDependency
         _toastService = toastService;
         _loggerFactory = loggerFactory;
         _themeService = themeService;
+        _listenerLogEventSink = listenerLogEventSink;
     }
 
     // ReSharper disable once ArrangeModifiersOrder
     public static new App Current =>
         (App?)Application.Current
-        ?? throw new ArgumentNullException(
-            nameof(Application.Current),
-            "Application is not yet initialized"
-        );
+        ?? throw new InvalidOperationException("Application is not yet initialized");
+
+    public static Window MainWindow { get; private set; } = null!;
 
     public static TopLevel TopLevel { get; private set; } = null!;
 
@@ -55,6 +57,7 @@ public sealed class App : Application, IDisposable, ISingletonDependency
         AvaloniaXamlLoader.Load(this);
         DataTemplates.Add(_viewLocator);
         _themeService.Initialize();
+        _listenerLogEventSink.Initialize();
 
         _subscriptions = Disposable.Combine(
             AppDomain
@@ -86,12 +89,8 @@ public sealed class App : Application, IDisposable, ISingletonDependency
             DisableAvaloniaDataAnnotationValidation();
             var window = _viewLocator.CreateView(_mainWindowViewModel) as Window;
             desktop.MainWindow = window;
-            TopLevel =
-                window
-                ?? throw new ArgumentNullException(
-                    nameof(Application.Current),
-                    "Application is not yet initialized"
-                );
+            TopLevel = MainWindow =
+                window ?? throw new InvalidOperationException("Application is not yet initialized");
         }
 
         base.OnFrameworkInitializationCompleted();

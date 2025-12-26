@@ -112,8 +112,7 @@ public sealed class DialogService : IDialogService, ISingletonDependency
     }
 
     public void ShowDialog<TViewModel>(TViewModel viewModel)
-        where TViewModel : DialogViewModel
-    {
+        where TViewModel : DialogViewModel =>
         _manager
             .CreateDialog()
             .WithViewModel(d =>
@@ -122,7 +121,6 @@ public sealed class DialogService : IDialogService, ISingletonDependency
                 return viewModel;
             })
             .TryShow();
-    }
 
     public void ShowDialog<TViewModel>()
         where TViewModel : DialogViewModel =>

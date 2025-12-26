@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
@@ -79,6 +80,7 @@ internal sealed class AvaloniaThread
                 [],
                 desktop =>
                 {
+                    desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
                     desktop.Startup += (_, _) => _applicationStarted.SetResult(null!);
                     desktop.Exit += (_, _) =>
                     {

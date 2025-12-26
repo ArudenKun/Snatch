@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Humanizer;
 using Snatch.Models.EventData;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch.ViewModels;
 
@@ -16,5 +15,10 @@ public sealed partial class SplashViewModel : ViewModel
         StatusText = "Loading Settings";
         await Task.Delay(200.Milliseconds());
         await LocalEventBus.PublishAsync(new SplashViewFinishedEventData());
+
+        if (GeneralOptions.ShowConsole)
+        {
+            await LocalEventBus.PublishAsync(new ConsoleWindowShowEventData());
+        }
     }
 }

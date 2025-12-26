@@ -1,11 +1,25 @@
 ﻿using Avalonia.Threading;
 
-namespace Snatch.Extensions;
+namespace Snatch.Utilities.Extensions;
 
 public static class DispatcherExtensions
 {
     extension(IDispatcher dispatcher)
     {
+        public Task PostAsync(Func<Task> action, DispatcherPriority dispatcherPriority = default)
+        {
+            var tcs = new TaskCompletionSource();
+            dispatcher.Post(
+                () =>
+                {
+                    action().GetAwaiter().GetResult();
+                    tcs.SetResult();
+                },
+                dispatcherPriority
+            );
+            return tcs.Task;
+        }
+
         public Task<T> PostAsync<T>(Func<T> action, DispatcherPriority dispatcherPriority = default)
         {
             var tcs = new TaskCompletionSource<T>();

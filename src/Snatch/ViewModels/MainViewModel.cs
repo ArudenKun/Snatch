@@ -39,8 +39,6 @@ public sealed partial class MainViewModel : ViewModel, ILocalEventHandler<ShowPa
     [ObservableProperty]
     public partial PageViewModel Page { get; set; }
 
-    partial void OnPageChanged(PageViewModel value) { }
-
     public Task HandleEventAsync(ShowPageEventData eventData)
     {
         HandlePageChanged(eventData.ViewModelType);

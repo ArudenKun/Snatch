@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using Avalonia.Data.Converters;
-using Snatch.Core;
 
 namespace Snatch.Converters;
 

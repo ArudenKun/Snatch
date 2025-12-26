@@ -1,0 +1,65 @@
+﻿<suki:SukiWindow
+    x:Class="Snatch.Views.ConsoleWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:snatch="https://github.com/arudenkun/Snatch"
+    xmlns:suki="https://github.com/kikipoulet/SukiUI"
+    Title="ConsoleWindow"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="snatch:ConsoleWindowViewModel"
+    mc:Ignorable="d">
+    <Grid RowDefinitions="*,Auto">
+        <Grid.Styles>
+            <Style
+                x:DataType="snatch:LogEntry"
+                Selector="DataGridRow">
+                <Setter Property="Padding" Value="0" />
+            </Style>
+            <Style Selector="DataGridCell.size">
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="Padding" Value="0" />
+            </Style>
+        </Grid.Styles>
+        <DataGrid
+            x:Name="LogDataGrid"
+            Margin="12,2,12,1"
+            AutoGenerateColumns="False"
+            CanUserResizeColumns="True"
+            CanUserSortColumns="False"
+            ItemsSource="{Binding Entries}"
+            LayoutUpdated="OnLayoutUpdated">
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="150"
+                    Binding="{Binding Timestamp}"
+                    CellStyleClasses="size"
+                    Header="Time" />
+                <DataGridTextColumn
+                    Width="90"
+                    Binding="{Binding LogLevel}"
+                    CellStyleClasses="size"
+                    Header="Level" />
+                <DataGridTextColumn
+                    Width="400"
+                    Binding="{Binding State}"
+                    CellStyleClasses="size Warning"
+                    Header="State" />
+                <DataGridTextColumn
+                    Width="300"
+                    Binding="{Binding Exception}"
+                    CellStyleClasses="size"
+                    Header="Exception" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <CheckBox
+            x:Name="CanAutoScroll"
+            Grid.Row="1"
+            Margin="20,10"
+            Content="Auto Scroll log"
+            FontSize="11"
+            IsChecked="True" />
+    </Grid>
+</suki:SukiWindow>

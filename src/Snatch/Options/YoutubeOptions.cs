@@ -1,5 +1,9 @@
 ﻿using System.Net;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Snatch.Core.Youtube;
+using Snatch.Core.Youtube.Downloading;
+using YoutubeExplode.Videos.Streams;
 
 namespace Snatch.Options;
 
@@ -27,11 +31,11 @@ public sealed partial class YoutubeOptions : ObservableObject
     [ObservableProperty]
     public partial IReadOnlyList<Cookie> LastAuthCookies { get; set; } = [];
 
-    // [ObservableProperty]
-    // [JsonConverter(typeof(ContainerJsonConverter))]
-    // public partial Container LastContainer { get; set; } = Container.Mp4;
-    //
-    // [ObservableProperty]
-    // public partial VideoQualityPreference LastVideoQualityPreference { get; set; } =
-    //     VideoQualityPreference.Highest;
+    [ObservableProperty]
+    [JsonConverter(typeof(ContainerJsonConverter))]
+    public partial Container LastContainer { get; set; } = Container.Mp4;
+
+    [ObservableProperty]
+    public partial VideoQualityPreference LastVideoQualityPreference { get; set; } =
+        VideoQualityPreference.Highest;
 }

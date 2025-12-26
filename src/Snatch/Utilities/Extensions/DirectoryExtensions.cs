@@ -1,4 +1,4 @@
-﻿namespace Snatch.Extensions;
+﻿namespace Snatch.Utilities.Extensions;
 
 internal static class DirectoryExtensions
 {

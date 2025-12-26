@@ -1,5 +1,5 @@
 ﻿using Avalonia.Threading;
-using Snatch.Extensions;
+using Snatch.Utilities.Extensions;
 
 namespace Snatch.Utilities;
 

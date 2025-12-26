@@ -1,6 +1,6 @@
 ﻿using Snatch.ViewModels;
 
-namespace Snatch.Extensions;
+namespace Snatch.Utilities.Extensions;
 
 public static class R3Extensions
 {

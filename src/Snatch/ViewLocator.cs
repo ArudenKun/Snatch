@@ -24,7 +24,6 @@ public sealed class ViewLocator : IDataTemplate, ISingletonDependency
     public Control CreateView(ViewModel viewModel)
     {
         var viewModelType = viewModel.GetType();
-
         var viewType = ViewTypeCache.GetOrAdd(
             viewModelType,
             k => OpenGenericViewType.MakeGenericType(k)

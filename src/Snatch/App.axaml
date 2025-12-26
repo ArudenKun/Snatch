@@ -4,10 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:suki="https://github.com/kikipoulet/SukiUI"
     RequestedThemeVariant="Default">
-    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
-
     <Application.Styles>
         <suki:SukiTheme ThemeColor="Blue" />
-        <StyleInclude Source="/SnatchStyles.axaml" />
+        <StyleInclude Source="avares://SukiUI.Dock/Index.axaml" />
+        <StyleInclude Source="SnatchStyles.axaml" />
     </Application.Styles>
 </Application>

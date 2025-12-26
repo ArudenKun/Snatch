@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using Avalonia.Data.Converters;
 using Snatch.Core;
-using Snatch.Extensions;
+using Snatch.Utilities.Extensions;
 using ZLinq;
 
 namespace Snatch.Converters;

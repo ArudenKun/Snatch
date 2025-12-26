@@ -6,13 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliWrap" />
+    <PackageReference Include="Gress" />
     <PackageReference Include="Humanizer.Core" />
+    <PackageReference Include="JsonExtensions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <PackageReference Include="Microsoft.Kiota.Bundle" />
     <PackageReference Include="R3" />
     <PackageReference Include="R3Extensions.ObservableEvents.SourceGenerator" />
-    <PackageReference Include="TrailBase" />
+    <PackageReference Include="TagLibSharp" />
+    <PackageReference Include="YoutubeExplode.Converter" />
     <PackageReference Include="ZLinq" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Twitch\" />
   </ItemGroup>
 </Project>

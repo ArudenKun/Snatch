@@ -12,5 +12,8 @@
     <StackPanel>
         <TextBlock Text="Testing" />
         <TextBlock Text="{Binding Test}" />
+        <Button
+            Command="{Binding LogCommand}"
+            Content="Log" />
     </StackPanel>
 </UserControl>

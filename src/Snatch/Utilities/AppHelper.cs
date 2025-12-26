@@ -1,4 +1,4 @@
-﻿using Snatch.Extensions;
+﻿using Snatch.Utilities.Extensions;
 
 namespace Snatch.Utilities;
 
@@ -37,5 +37,7 @@ public static class AppHelper
 
     public static string LogsDir => DataDir.CombinePath("logs");
 
+    public static string DataPath => DataDir.CombinePath("data.json");
     public static string SettingsPath => DataDir.CombinePath("appsettings.json");
+    public static string ToolsDir => DataDir.CombinePath("tools");
 }

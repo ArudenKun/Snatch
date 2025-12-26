@@ -32,6 +32,7 @@
                 </suki:SukiSideMenuItem>
             </DataTemplate>
         </suki:SukiSideMenu.ItemTemplate>
+        <suki:SukiSideMenu.IsSelectedItemContentMovable />
         <suki:SukiSideMenu.HeaderContent>
             <Image
                 Width="80"

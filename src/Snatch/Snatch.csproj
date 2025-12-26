@@ -16,7 +16,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Avalonia" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Include="Avalonia.Diagnostics">
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
@@ -41,10 +40,12 @@
     <PackageReference Include="SukiUI.Dock" />
     <PackageReference Include="Velopack" />
     <PackageReference Include="Volo.Abp.EventBus" />
+    <PackageReference Include="Volo.Abp.Mapperly" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Snatch.Core\Snatch.Core.csproj" />
+    <ProjectReference Include="..\Snatch.Database\Snatch.Database.csproj" />
     <ProjectReference Include="..\Snatch.Hosting\Snatch.Hosting.csproj" />
     <ProjectReference
       Include="..\Snatch.SourceGenerators\Snatch.SourceGenerators.csproj"
@@ -55,8 +56,6 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Services\" />
-    <Folder Include="ViewModels\Components\" />
     <Folder Include="ViewModels\Dialogs\" />
     <Folder Include="Views\Components\" />
     <Folder Include="Views\Dialogs\" />

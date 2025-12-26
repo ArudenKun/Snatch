@@ -7,6 +7,7 @@ using ServiceScan.SourceGenerator;
 using Snatch.Options;
 using Snatch.Utilities;
 using Volo.Abp.DependencyInjection;
+using ZLinq;
 
 namespace Snatch.Services;
 
@@ -14,7 +15,7 @@ public sealed partial class SettingsService : ISingletonDependency
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly Dictionary<object, PropertyInfo[]> _rootMap = [];
-    private readonly Dictionary<string, object?> _sectionMap = new();
+    private readonly Dictionary<OptionAttribute, object?> _sectionMap = new();
 
     public SettingsService(IServiceProvider serviceProvider)
     {
@@ -25,17 +26,28 @@ public sealed partial class SettingsService : ISingletonDependency
 
     public void Save()
     {
+        File.WriteAllBytes(FilePath, SaveCore());
+    }
+
+    public async Task SaveAsync()
+    {
+        await File.WriteAllBytesAsync(FilePath, SaveCore());
+    }
+
+    private byte[] SaveCore()
+    {
         // 1. Clear previous state to prevent duplicate key errors on re-save
         _rootMap.Clear();
         _sectionMap.Clear();
 
         // 2. Populate dictionaries via the Source Generator handler
-        GetOptions(_serviceProvider);
+        PopulateOptions();
 
         // 3. Create a master dictionary to merge Root properties and Section objects
-        var finalData = new Dictionary<string, object?>(_sectionMap);
+        var finalData = new Dictionary<string, object?>();
 
-        // 4. Flatten root options into the master dictionary
+        // 4. FIRST: Flatten root options into the master dictionary
+        // This ensures they appear at the top of the JSON file.
         foreach (var (instance, properties) in _rootMap)
         {
             foreach (var prop in properties)
@@ -45,36 +57,47 @@ public sealed partial class SettingsService : ISingletonDependency
             }
         }
 
-        // 5. Ensure directory exists
+        // 5. SECOND: Add the sections
+        foreach (
+            var (attribute, sectionValue) in _sectionMap
+                .AsValueEnumerable()
+                .OrderBy(x => x.Key.Order)
+        )
+        {
+            finalData[attribute.Section] = sectionValue;
+        }
+
+        // 6. Ensure directory exists
         var dirPath = Path.GetDirectoryName(FilePath);
         if (!string.IsNullOrWhiteSpace(dirPath))
         {
             Directory.CreateDirectory(dirPath);
         }
 
-        // 6. Serialize and write safely
+        // 7. Serialize and write safely
         var jsonBytes = JsonSerializer.SerializeToUtf8Bytes(
             finalData,
             SettingsServiceSerializerContext.Default.Options
         );
-        File.WriteAllBytes(FilePath, jsonBytes);
+        return jsonBytes;
     }
 
     [GenerateServiceRegistrations(
         AttributeFilter = typeof(OptionAttribute),
-        CustomHandler = nameof(GetOptionsHandler)
+        CustomHandler = nameof(PopulateOptionsHandler)
     )]
-    private partial void GetOptions(IServiceProvider serviceProvider);
+    private partial void PopulateOptions();
 
-    private void GetOptionsHandler<T>(IServiceProvider serviceProvider)
+    private void PopulateOptionsHandler<T>()
         where T : class
     {
-        var option = serviceProvider.GetService<IOptions<T>>()?.Value;
+        var option = _serviceProvider.GetService<IOptions<T>>()?.Value;
         if (option is null)
             return;
 
         var type = typeof(T);
-        var section = type.GetCustomAttribute<OptionAttribute>()?.Section;
+        var attribute = type.GetCustomAttribute<OptionAttribute>()!;
+        var section = attribute.Section;
 
         if (section.IsNullOrWhiteSpace())
         {
@@ -83,7 +106,7 @@ public sealed partial class SettingsService : ISingletonDependency
         }
         else
         {
-            _sectionMap.Add(section, option);
+            _sectionMap.Add(attribute, option);
         }
     }
 
