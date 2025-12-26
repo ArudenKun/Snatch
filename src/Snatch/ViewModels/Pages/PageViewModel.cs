@@ -1,11 +1,9 @@
-﻿using AutoInterfaceAttributes;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Lucide.Avalonia;
 
 namespace Snatch.ViewModels.Pages;
 
-[AutoInterface(Inheritance = [typeof(IViewModel)])]
-public abstract partial class PageViewModel : ViewModel, IPageViewModel
+public abstract partial class PageViewModel : ViewModel
 {
     /// <summary>
     /// The index of the page.

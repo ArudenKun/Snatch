@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AsyncAwaitBestPractices;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Humanizer;
 using Snatch.Models.EventData;
 
@@ -9,16 +11,21 @@ public sealed partial class SplashViewModel : ViewModel
     [ObservableProperty]
     public partial string StatusText { get; set; } = "Initializing";
 
-    public override async void OnLoaded()
+    public override void OnLoaded()
+    {
+        StartAsync().SafeFireAndForget();
+    }
+
+    private async Task StartAsync()
     {
         await Task.Delay(1.Seconds());
         StatusText = "Loading Settings";
         await Task.Delay(200.Milliseconds());
-        await LocalEventBus.PublishAsync(new SplashViewFinishedEventData());
+        Messenger.Send(new SplashViewFinishedEventData());
 
         if (GeneralOptions.ShowConsole)
         {
-            await LocalEventBus.PublishAsync(new ConsoleWindowShowEventData());
+            Messenger.Send(new ConsoleWindowShowEventData());
         }
     }
 }

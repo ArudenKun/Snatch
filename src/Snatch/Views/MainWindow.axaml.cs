@@ -1,17 +1,13 @@
-using Microsoft.Extensions.DependencyInjection;
 using Snatch.Models.EventData;
 using Snatch.ViewModels;
-using Volo.Abp.DependencyInjection;
-using Volo.Abp.EventBus;
 
 namespace Snatch.Views;
 
-[Dependency(ServiceLifetime.Singleton)]
-public sealed partial class MainWindow
-    : SukiWindow<MainWindowViewModel>,
-        ILocalEventHandler<ConsoleWindowCloseEventData>,
-        ILocalEventHandler<ConsoleWindowShowEventData>,
-        ILocalEventHandler<ConsoleWindowHideEventData>
+public sealed partial class MainWindow : SukiWindow<MainWindowViewModel>
+// ,
+// ILocalEventHandler<ConsoleWindowCloseEventData>,
+// ILocalEventHandler<ConsoleWindowShowEventData>,
+// ILocalEventHandler<ConsoleWindowHideEventData>
 {
     private readonly ViewLocator _viewLocator;
     private readonly ConsoleWindowViewModel _consoleWindowViewModel;
@@ -39,7 +35,9 @@ public sealed partial class MainWindow
 
     public Task HandleEventAsync(ConsoleWindowShowEventData eventData)
     {
-        _consoleWindow ??= _viewLocator.CreateView<ConsoleWindow>(_consoleWindowViewModel);
+        _consoleWindow ??= _viewLocator.CreateView<ConsoleWindow, ConsoleWindowViewModel>(
+            _consoleWindowViewModel
+        );
         _consoleWindow.Show();
         Focus();
         return Task.CompletedTask;

@@ -1,20 +1,23 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Snatch.Models.EventData;
 using Snatch.ViewModels.Pages;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.EventBus;
 using ZLinq;
 
 namespace Snatch.ViewModels;
 
 [Dependency(ServiceLifetime.Singleton)]
-public sealed partial class MainViewModel : ViewModel, ILocalEventHandler<ShowPageEventData>
+public sealed partial class MainViewModel
+    : ViewModel,
+        // ILocalEventHandler<ShowPageEventData>
+        IRecipient<ShowPageEventData>
 {
     private readonly Dictionary<Type, int> _pageIndexMap;
 
-    public MainViewModel(IEnumerable<IPageViewModel> pageViewModels)
+    public MainViewModel(IEnumerable<PageViewModel> pageViewModels)
     {
         // 1. We create the initial structure based on the injected services.
         // Even if they are transient, we need an initial instance to populate the Menu/Tabs.
@@ -39,13 +42,12 @@ public sealed partial class MainViewModel : ViewModel, ILocalEventHandler<ShowPa
     [ObservableProperty]
     public partial PageViewModel Page { get; set; }
 
-    public Task HandleEventAsync(ShowPageEventData eventData)
+    public void Receive(ShowPageEventData message)
     {
-        HandlePageChanged(eventData.ViewModelType);
-        return Task.CompletedTask;
+        ChangePage(message.ViewModelType);
     }
 
-    private void HandlePageChanged(Type viewModelType)
+    private void ChangePage(Type viewModelType)
     {
         // 1. Check if we know this page type
         if (!_pageIndexMap.TryGetValue(viewModelType, out var index))

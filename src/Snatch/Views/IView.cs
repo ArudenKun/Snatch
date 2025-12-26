@@ -2,9 +2,7 @@
 
 namespace Snatch.Views;
 
-public interface IView;
-
-public interface IView<TViewModel> : IView
+public interface IView<TViewModel>
     where TViewModel : ViewModel
 {
     TViewModel ViewModel { get; }

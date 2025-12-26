@@ -1,5 +1,4 @@
-﻿using AutoInterfaceAttributes;
-using Avalonia.Collections;
+﻿using Avalonia.Collections;
 using Avalonia.Styling;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
@@ -15,9 +14,7 @@ using Color = Avalonia.Media.Color;
 
 namespace Snatch.Services;
 
-[AutoInterface(Inheritance = [typeof(IDisposable)])]
-[UsedImplicitly]
-public sealed class ThemeService : IThemeService, ISingletonDependency
+public sealed class ThemeService : IDisposable, ISingletonDependency
 {
     private readonly IDisposable _subscriptions;
     private readonly AppearanceOptions _options;

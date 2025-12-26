@@ -1,5 +1,4 @@
-﻿using AutoInterfaceAttributes;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using SukiUI.Controls;
 using SukiUI.Dialogs;
 
@@ -7,8 +6,7 @@ namespace Snatch.ViewModels.Dialogs;
 
 public abstract class DialogViewModel : DialogViewModel<bool>;
 
-[AutoInterface(Inheritance = [typeof(IViewModel)])]
-public abstract partial class DialogViewModel<TResult> : ViewModel, IDialogViewModel<TResult>
+public abstract partial class DialogViewModel<TResult> : ViewModel
 {
     private bool _isResultSet;
 

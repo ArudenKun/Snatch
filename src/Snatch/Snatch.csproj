@@ -12,10 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoInterface">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="AsyncAwaitBestPractices" />
+    <PackageReference Include="Avalonia" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Include="Avalonia.Diagnostics">
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
@@ -28,6 +26,7 @@
     <PackageReference Include="MonoMod.RuntimeDetour" PrivateAssets="all" />
     <PackageReference Include="R3Extensions.Avalonia" />
     <PackageReference Include="R3Extensions.ObservableEvents.SourceGenerator" />
+    <PackageReference Include="Riok.Mapperly" />
     <PackageReference Include="Serilog.Enrichers.Demystifier" />
     <PackageReference Include="Serilog.Extensions.Hosting" />
     <PackageReference Include="Serilog.Sinks.Async" />
@@ -39,13 +38,10 @@
     </PackageReference>
     <PackageReference Include="SukiUI.Dock" />
     <PackageReference Include="Velopack" />
-    <PackageReference Include="Volo.Abp.EventBus" />
-    <PackageReference Include="Volo.Abp.Mapperly" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Snatch.Core\Snatch.Core.csproj" />
-    <ProjectReference Include="..\Snatch.Database\Snatch.Database.csproj" />
     <ProjectReference Include="..\Snatch.Hosting\Snatch.Hosting.csproj" />
     <ProjectReference
       Include="..\Snatch.SourceGenerators\Snatch.SourceGenerators.csproj"
@@ -55,6 +51,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Dependency\" />
+    <Folder Include="Mappers\" />
     <Folder Include="Properties\" />
     <Folder Include="ViewModels\Dialogs\" />
     <Folder Include="Views\Components\" />

@@ -6,7 +6,7 @@ using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Views;
 
-public abstract class SukiWindow<TViewModel> : SukiWindow, IView<TViewModel>, ITransientDependency
+public abstract class SukiWindow<TViewModel> : SukiWindow, IView<TViewModel>
     where TViewModel : ViewModel
 {
     public new TViewModel DataContext

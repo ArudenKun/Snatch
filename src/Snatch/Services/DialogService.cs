@@ -1,6 +1,4 @@
-﻿using AutoInterfaceAttributes;
-using Avalonia.Controls.Notifications;
-using JetBrains.Annotations;
+﻿using Avalonia.Controls.Notifications;
 using Microsoft.Extensions.DependencyInjection;
 using Snatch.Models;
 using Snatch.ViewModels.Dialogs;
@@ -9,9 +7,7 @@ using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Services;
 
-[AutoInterface]
-[UsedImplicitly]
-public sealed class DialogService : IDialogService, ISingletonDependency
+public sealed class DialogService : ISingletonDependency
 {
     private readonly ISukiDialogManager _manager;
 

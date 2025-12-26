@@ -102,9 +102,9 @@ public static partial class SnatchBootstrap
                                 )
                             )
                             .WriteTo.Async(c => c.Console(outputTemplate: LoggingOptions.Template))
-                            .WriteTo.Async(c =>
-                                c.Sink(sp.GetRequiredService<ListenerLogEventSink>())
-                            )
+                // .WriteTo.Async(c =>
+                //     c.Sink(sp.GetRequiredService<ListenerLogEventSink>())
+                // )
                 );
 
         private IHostBuilder ConfigureConfiguration() =>

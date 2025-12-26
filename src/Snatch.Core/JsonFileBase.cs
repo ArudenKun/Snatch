@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
@@ -12,7 +13,7 @@ public abstract class JsonFileBase
     private readonly string _filePath;
 
     private readonly JsonTypeInfo _rootTypeInfo;
-    private readonly IReadOnlyDictionary<JsonPropertyInfo, object?> _rootPropertyDefaults;
+    private readonly ReadOnlyDictionary<JsonPropertyInfo, object?> _rootPropertyDefaults;
 
     /// <summary>
     /// Initializes an instance of <see cref="JsonFileBase" />.
@@ -26,10 +27,9 @@ public abstract class JsonFileBase
         _filePath = filePath;
 
         _rootTypeInfo = jsonOptions.GetTypeInfo(GetType());
-        _rootPropertyDefaults = _rootTypeInfo.Properties.ToDictionary(
-            p => p,
-            p => p.Get?.Invoke(this)
-        );
+        _rootPropertyDefaults = _rootTypeInfo
+            .Properties.ToDictionary(p => p, p => p.Get?.Invoke(this))
+            .AsReadOnly();
     }
 
     /// <summary>

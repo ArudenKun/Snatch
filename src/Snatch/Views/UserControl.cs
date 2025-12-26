@@ -2,11 +2,10 @@
 using Avalonia.Interactivity;
 using Snatch.Utilities;
 using Snatch.ViewModels;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Views;
 
-public abstract class UserControl<TViewModel> : UserControl, IView<TViewModel>, ITransientDependency
+public abstract class UserControl<TViewModel> : UserControl, IView<TViewModel>
     where TViewModel : ViewModel
 {
     public new TViewModel DataContext

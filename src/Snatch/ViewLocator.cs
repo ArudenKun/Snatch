@@ -18,8 +18,12 @@ public sealed class ViewLocator : IDataTemplate, ISingletonDependency
         _serviceProvider = serviceProvider;
     }
 
-    public TView CreateView<TView>(ViewModel viewModel)
-        where TView : Control, IView => (TView)CreateView(viewModel);
+    public TView CreateView<TView, TViewModel>(TViewModel viewModel)
+        where TView : Control
+        where TViewModel : ViewModel
+    {
+        return (TView)CreateView(viewModel);
+    }
 
     public Control CreateView(ViewModel viewModel)
     {

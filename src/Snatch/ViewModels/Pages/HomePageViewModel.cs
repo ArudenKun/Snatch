@@ -9,10 +9,13 @@ public sealed partial class HomePageViewModel : PageViewModel
     public override int Index => 1;
     public override LucideIconKind IconKind => LucideIconKind.House;
 
-    public int Test { get; } = Random.Shared.Next(1, 1000);
+    public int Test { get; private set; } = Random.Shared.Next(1, 1000);
 
     public override void OnLoaded()
     {
+        Test = Random.Shared.Next(0, 100);
+        OnPropertyChanged(nameof(Test));
+
         Logger.LogInformation($"{nameof(HomePageViewModel)} {nameof(OnLoaded)}");
     }
 

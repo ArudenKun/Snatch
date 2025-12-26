@@ -19,20 +19,21 @@ public sealed class App : Application, IDisposable, ISingletonDependency
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
     private readonly ViewLocator _viewLocator;
-    private readonly IToastService _toastService;
+    private readonly ToastService _toastService;
     private readonly ILoggerFactory _loggerFactory;
-    private readonly IThemeService _themeService;
-    private readonly ListenerLogEventSink _listenerLogEventSink;
+    private readonly ThemeService _themeService;
+
+    // private readonly ListenerLogEventSink _listenerLogEventSink;
 
     private IDisposable? _subscriptions;
 
     public App(
         MainWindowViewModel mainWindowViewModel,
         ViewLocator viewLocator,
-        IToastService toastService,
+        ToastService toastService,
         ILoggerFactory loggerFactory,
-        IThemeService themeService,
-        ListenerLogEventSink listenerLogEventSink
+        ThemeService themeService
+    // , ListenerLogEventSink listenerLogEventSink
     )
     {
         _mainWindowViewModel = mainWindowViewModel;
@@ -40,7 +41,7 @@ public sealed class App : Application, IDisposable, ISingletonDependency
         _toastService = toastService;
         _loggerFactory = loggerFactory;
         _themeService = themeService;
-        _listenerLogEventSink = listenerLogEventSink;
+        // _listenerLogEventSink = listenerLogEventSink;
     }
 
     // ReSharper disable once ArrangeModifiersOrder
@@ -57,7 +58,7 @@ public sealed class App : Application, IDisposable, ISingletonDependency
         AvaloniaXamlLoader.Load(this);
         DataTemplates.Add(_viewLocator);
         _themeService.Initialize();
-        _listenerLogEventSink.Initialize();
+        // _listenerLogEventSink.Initialize();
 
         _subscriptions = Disposable.Combine(
             AppDomain

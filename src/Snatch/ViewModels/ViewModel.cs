@@ -1,22 +1,26 @@
 ﻿using System.Diagnostics;
-using AutoInterfaceAttributes;
 using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using R3;
+using ServiceScan.SourceGenerator;
 using Snatch.Options;
 using Snatch.Services;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.EventBus.Local;
 
 namespace Snatch.ViewModels;
 
-[AutoInterface(Inheritance = [typeof(IDisposable), typeof(ITransientDependency)])]
-public abstract partial class ViewModel : ObservableValidator, IViewModel
+public abstract partial class ViewModel : ObservableValidator, IDisposable
 {
+    protected ViewModel()
+    {
+        RegisterRecipients();
+    }
+
     public required IServiceProvider ServiceProvider { protected get; init; }
     public required ITransientCachedServiceProvider CachedServiceProvider { protected get; init; }
 
@@ -28,18 +32,16 @@ public abstract partial class ViewModel : ObservableValidator, IViewModel
             LoggerFactory.CreateLogger(GetType().FullName!)
         );
 
-    public ILocalEventBus LocalEventBus =>
-        CachedServiceProvider.GetRequiredService<ILocalEventBus>();
+    public IMessenger Messenger => CachedServiceProvider.GetRequiredService<IMessenger>();
 
-    public IToastService ToastService => CachedServiceProvider.GetRequiredService<IToastService>();
+    public ToastService ToastService => CachedServiceProvider.GetRequiredService<ToastService>();
 
-    public IDialogService DialogService =>
-        CachedServiceProvider.GetRequiredService<IDialogService>();
+    public DialogService DialogService => CachedServiceProvider.GetRequiredService<DialogService>();
 
     public SettingsService SettingsService =>
         CachedServiceProvider.GetRequiredService<SettingsService>();
 
-    public IThemeService ThemeService => CachedServiceProvider.GetRequiredService<IThemeService>();
+    public ThemeService ThemeService => CachedServiceProvider.GetRequiredService<ThemeService>();
 
     public GeneralOptions GeneralOptions =>
         CachedServiceProvider.GetRequiredService<IOptions<GeneralOptions>>().Value;
@@ -106,15 +108,45 @@ public abstract partial class ViewModel : ObservableValidator, IViewModel
         return shouldCatch;
     }
 
+    #region Messenger Registration
+
+    [GenerateServiceRegistrations(
+        AssignableTo = typeof(IRecipient<>),
+        CustomHandler = nameof(RegisterRecipientsHandler)
+    )]
+    private partial void RegisterRecipients();
+
+    private void RegisterRecipientsHandler<TRecipient, TMessage>()
+        where TRecipient : class, IRecipient<TMessage>
+        where TMessage : class
+    {
+        if (!GetType().IsAssignableTo(typeof(IRecipient<TMessage>)))
+            return;
+
+        WeakReferenceMessenger.Default.Register(this.As<TRecipient>());
+    }
+
+    #endregion
+
     #region Disposal
 
     // ReSharper disable once CollectionNeverQueried.Local
     private readonly CompositeDisposable _disposables = new();
     private bool _disposed;
 
+    public void AddTo(IDisposable disposable)
+    {
+        if (_disposed)
+        {
+            disposable.Dispose();
+            return;
+        }
+
+        _disposables.Add(disposable);
+    }
+
     ~ViewModel() => Dispose(false);
 
-    /// <inheritdoc />>
     public void Dispose()
     {
         Dispose(true);
@@ -133,17 +165,6 @@ public abstract partial class ViewModel : ObservableValidator, IViewModel
         }
 
         _disposed = true;
-    }
-
-    public void AddTo(IDisposable disposable)
-    {
-        if (_disposed)
-        {
-            disposable.Dispose();
-            return;
-        }
-
-        _disposables.Add(disposable);
     }
 
     #endregion

@@ -1,5 +1,4 @@
-﻿using AutoInterfaceAttributes;
-using Avalonia.Controls.Notifications;
+﻿using Avalonia.Controls.Notifications;
 using JetBrains.Annotations;
 using Snatch.Models;
 using Snatch.Options;
@@ -8,9 +7,8 @@ using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Services;
 
-[AutoInterface]
 [UsedImplicitly]
-public sealed class ToastService : IToastService, ISingletonDependency
+public sealed class ToastService : ISingletonDependency
 {
     private readonly ISukiToastManager _manager;
     private readonly AppearanceOptions _options;
