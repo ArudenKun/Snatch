@@ -2,18 +2,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using Snatch.Models.EventData;
+using Snatch.Dependency;
+using Snatch.Models.Messages;
 using Snatch.ViewModels.Pages;
-using Volo.Abp.DependencyInjection;
 using ZLinq;
 
 namespace Snatch.ViewModels;
 
 [Dependency(ServiceLifetime.Singleton)]
-public sealed partial class MainViewModel
-    : ViewModel,
-        // ILocalEventHandler<ShowPageEventData>
-        IRecipient<ShowPageEventData>
+public sealed partial class MainViewModel : ViewModel, IRecipient<ShowPageMessage>
 {
     private readonly Dictionary<Type, int> _pageIndexMap;
 
@@ -42,7 +39,7 @@ public sealed partial class MainViewModel
     [ObservableProperty]
     public partial PageViewModel Page { get; set; }
 
-    public void Receive(ShowPageEventData message)
+    public void Receive(ShowPageMessage message)
     {
         ChangePage(message.ViewModelType);
     }

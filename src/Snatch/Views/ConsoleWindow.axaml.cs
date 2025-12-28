@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.LogicalTree;
 using Snatch.Models;
+using Snatch.Models.Messages;
 using Snatch.Utilities;
 using Snatch.ViewModels;
 
@@ -9,7 +10,7 @@ namespace Snatch.Views;
 
 public sealed partial class ConsoleWindow : SukiWindow<ConsoleWindowViewModel>
 {
-    private LogEntry? _item;
+    private LogMessage? _item;
 
     public ConsoleWindow()
     {

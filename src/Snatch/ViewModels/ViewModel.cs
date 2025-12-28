@@ -7,10 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using R3;
-using ServiceScan.SourceGenerator;
 using Snatch.Options;
 using Snatch.Services;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch.ViewModels;
 
@@ -18,48 +16,43 @@ public abstract partial class ViewModel : ObservableValidator, IDisposable
 {
     protected ViewModel()
     {
-        RegisterRecipients();
+        MessengerRegistrator.Register(this);
     }
 
     public required IServiceProvider ServiceProvider { protected get; init; }
-    public required ITransientCachedServiceProvider CachedServiceProvider { protected get; init; }
 
-    protected ILoggerFactory LoggerFactory =>
-        CachedServiceProvider.GetRequiredService<ILoggerFactory>();
+    protected ILoggerFactory LoggerFactory => ServiceProvider.GetRequiredService<ILoggerFactory>();
 
-    protected ILogger Logger =>
-        CachedServiceProvider.GetService<ILogger>(_ =>
-            LoggerFactory.CreateLogger(GetType().FullName!)
-        );
+    protected ILogger Logger => LoggerFactory.CreateLogger(GetType().FullName!);
 
-    public IMessenger Messenger => CachedServiceProvider.GetRequiredService<IMessenger>();
+    protected IMessenger Messenger => ServiceProvider.GetRequiredService<IMessenger>();
 
-    public ToastService ToastService => CachedServiceProvider.GetRequiredService<ToastService>();
+    protected ToastService ToastService => ServiceProvider.GetRequiredService<ToastService>();
 
-    public DialogService DialogService => CachedServiceProvider.GetRequiredService<DialogService>();
+    protected DialogService DialogService => ServiceProvider.GetRequiredService<DialogService>();
 
-    public SettingsService SettingsService =>
-        CachedServiceProvider.GetRequiredService<SettingsService>();
+    protected SettingsService SettingsService =>
+        ServiceProvider.GetRequiredService<SettingsService>();
 
-    public ThemeService ThemeService => CachedServiceProvider.GetRequiredService<ThemeService>();
+    protected ThemeService ThemeService => ServiceProvider.GetRequiredService<ThemeService>();
 
     public GeneralOptions GeneralOptions =>
-        CachedServiceProvider.GetRequiredService<IOptions<GeneralOptions>>().Value;
+        ServiceProvider.GetRequiredService<IOptions<GeneralOptions>>().Value;
 
     public AppearanceOptions AppearanceOptions =>
-        CachedServiceProvider.GetRequiredService<IOptions<AppearanceOptions>>().Value;
+        ServiceProvider.GetRequiredService<IOptions<AppearanceOptions>>().Value;
 
     public LoggingOptions LoggingOptions =>
-        CachedServiceProvider.GetRequiredService<IOptions<LoggingOptions>>().Value;
+        ServiceProvider.GetRequiredService<IOptions<LoggingOptions>>().Value;
 
     public YoutubeOptions YoutubeOptions =>
-        CachedServiceProvider.GetRequiredService<IOptions<YoutubeOptions>>().Value;
+        ServiceProvider.GetRequiredService<IOptions<YoutubeOptions>>().Value;
 
     public IStorageProvider StorageProvider =>
-        CachedServiceProvider.GetRequiredService<IStorageProvider>();
+        ServiceProvider.GetRequiredService<IStorageProvider>();
 
-    public IClipboard Clipboard => CachedServiceProvider.GetRequiredService<IClipboard>();
-    public ILauncher Launcher => CachedServiceProvider.GetRequiredService<ILauncher>();
+    public IClipboard Clipboard => ServiceProvider.GetRequiredService<IClipboard>();
+    public ILauncher Launcher => ServiceProvider.GetRequiredService<ILauncher>();
 
     [ObservableProperty]
     public virtual partial bool IsBusy { get; set; }
@@ -99,7 +92,7 @@ public abstract partial class ViewModel : ObservableValidator, IDisposable
             return shouldCatch;
         }
 
-        Logger.LogException(ex);
+        // Logger.LogException(ex);
         if (shouldDisplay)
         {
             ToastService.ShowExceptionToast(ex, "Error", ex.ToStringDemystified());
@@ -107,26 +100,6 @@ public abstract partial class ViewModel : ObservableValidator, IDisposable
 
         return shouldCatch;
     }
-
-    #region Messenger Registration
-
-    [GenerateServiceRegistrations(
-        AssignableTo = typeof(IRecipient<>),
-        CustomHandler = nameof(RegisterRecipientsHandler)
-    )]
-    private partial void RegisterRecipients();
-
-    private void RegisterRecipientsHandler<TRecipient, TMessage>()
-        where TRecipient : class, IRecipient<TMessage>
-        where TMessage : class
-    {
-        if (!GetType().IsAssignableTo(typeof(IRecipient<TMessage>)))
-            return;
-
-        WeakReferenceMessenger.Default.Register(this.As<TRecipient>());
-    }
-
-    #endregion
 
     #region Disposal
 

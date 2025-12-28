@@ -1,21 +1,26 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Microsoft.Extensions.Logging;
+using ServiceScan.SourceGenerator;
+using Snatch.Core.Utilities.Extensions;
+using Snatch.Dependency;
 using Snatch.ViewModels;
 using Snatch.Views;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch;
 
-public sealed class ViewLocator : IDataTemplate, ISingletonDependency
+public sealed partial class ViewLocator : IDataTemplate, ISingletonDependency
 {
     private static readonly Dictionary<Type, Type> ViewTypeCache = new();
-    private static readonly Type OpenGenericViewType = typeof(IView<>);
 
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<ViewLocator> _logger;
 
-    public ViewLocator(IServiceProvider serviceProvider)
+    public ViewLocator(IServiceProvider serviceProvider, ILogger<ViewLocator> logger)
     {
+        RegisterViews();
         _serviceProvider = serviceProvider;
+        _logger = logger;
     }
 
     public TView CreateView<TView, TViewModel>(TViewModel viewModel)
@@ -28,17 +33,15 @@ public sealed class ViewLocator : IDataTemplate, ISingletonDependency
     public Control CreateView(ViewModel viewModel)
     {
         var viewModelType = viewModel.GetType();
-        var viewType = ViewTypeCache.GetOrAdd(
-            viewModelType,
-            k => OpenGenericViewType.MakeGenericType(k)
-        );
+        var viewType = ViewTypeCache.GetOrDefault(viewModelType);
+        if (viewType is null)
+            return CreateText($"Could not find view for {viewModelType.FullName}");
 
         var view = _serviceProvider.GetService(viewType);
         if (view is not Control control)
-        {
             return CreateText($"Could not find view for {viewModelType.FullName}");
-        }
 
+        _logger.LogInformation("Created View {View}", viewType.Name);
         control.DataContext = viewModel;
         return control;
     }
@@ -56,4 +59,14 @@ public sealed class ViewLocator : IDataTemplate, ISingletonDependency
     bool IDataTemplate.Match(object? data) => data is ViewModel;
 
     private static TextBlock CreateText(string text) => new() { Text = text };
+
+    [GenerateServiceRegistrations(
+        AssignableTo = typeof(IView<>),
+        CustomHandler = nameof(RegisterViewsHandler)
+    )]
+    private partial void RegisterViews();
+
+    private static void RegisterViewsHandler<TView, TViewModel>()
+        where TView : Control, IView<TViewModel>
+        where TViewModel : ViewModel => ViewTypeCache.TryAdd(typeof(TViewModel), typeof(TView));
 }

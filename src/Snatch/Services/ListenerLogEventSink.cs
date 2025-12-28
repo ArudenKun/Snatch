@@ -4,8 +4,9 @@ using Microsoft.Extensions.Logging;
 using Riok.Mapperly.Abstractions;
 using Serilog.Core;
 using Serilog.Events;
+using Snatch.Dependency;
 using Snatch.Models;
-using Volo.Abp.DependencyInjection;
+using Snatch.Models.Messages;
 
 namespace Snatch.Services;
 
@@ -44,15 +45,14 @@ public sealed partial class ListenerLogEventSink : ILogEventSink, ISingletonDepe
     [Mapper(AutoUserMappings = false, RequiredMappingStrategy = RequiredMappingStrategy.None)]
     private static partial class LogEntryMapper
     {
-        [MapProperty(nameof(LogEvent.Level), nameof(LogEntry.LogLevel), Use = nameof(MapLogEvent))]
-        [MapPropertyFromSource(nameof(LogEntry.EventId), Use = nameof(MapEventId))]
-        [MapPropertyFromSource(nameof(LogEntry.State), Use = nameof(MapState))]
-        public static partial LogEntry Map(LogEvent source);
-
-        [MapProperty(nameof(LogEvent.Level), nameof(LogEntry.LogLevel), Use = nameof(MapLogEvent))]
-        [MapPropertyFromSource(nameof(LogEntry.EventId), Use = nameof(MapEventId))]
-        [MapPropertyFromSource(nameof(LogEntry.State), Use = nameof(MapState))]
-        public static partial void Map(LogEvent source, LogEntry destination);
+        [MapProperty(
+            nameof(LogEvent.Level),
+            nameof(LogMessage.LogLevel),
+            Use = nameof(MapLogEvent)
+        )]
+        [MapPropertyFromSource(nameof(LogMessage.EventId), Use = nameof(MapEventId))]
+        [MapPropertyFromSource(nameof(LogMessage.State), Use = nameof(MapState))]
+        public static partial LogMessage Map(LogEvent source);
 
         [UserMapping]
         private static object MapState(LogEvent logEvent)

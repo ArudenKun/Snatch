@@ -1,6 +1,6 @@
-﻿using Snatch.ViewModels;
+﻿using SplashViewModel = Snatch.ViewModels.Components.SplashViewModel;
 
-namespace Snatch.Views;
+namespace Snatch.Views.Components;
 
 public partial class SplashView : UserControl<SplashViewModel>
 {

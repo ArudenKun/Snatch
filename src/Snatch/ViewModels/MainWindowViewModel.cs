@@ -2,19 +2,15 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using Snatch.Models.EventData;
+using Snatch.Dependency;
+using Snatch.Models.Messages;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch.ViewModels;
 
 [Dependency(ServiceLifetime.Singleton)]
-public sealed partial class MainWindowViewModel
-    : ViewModel,
-        // ILocalEventHandler<SplashViewFinishedEventData>,
-        IRecipient<SplashViewFinishedEventData>,
-        ISingletonDependency
+public sealed partial class MainWindowViewModel : ViewModel, IRecipient<SplashViewFinishedMessage>
 {
     public MainWindowViewModel(ISukiToastManager toastManager, ISukiDialogManager dialogManager)
     {
@@ -34,24 +30,17 @@ public sealed partial class MainWindowViewModel
 
     public override void OnLoaded()
     {
-        ContentViewModel = ServiceProvider.GetRequiredService<SplashViewModel>();
+        ContentViewModel = ServiceProvider.GetRequiredService<Components.SplashViewModel>();
     }
 
     [RelayCommand(CanExecute = nameof(IsMainView))]
     private Task ShowPageAsync(Type pageType)
     {
-        // await LocalEventBus.PublishAsync(new ShowPageEventData(pageType));
-        Messenger.Send(new ShowPageEventData(pageType));
+        Messenger.Send(new ShowPageMessage(pageType));
         return Task.CompletedTask;
     }
 
-    public Task HandleEventAsync(SplashViewFinishedEventData eventData)
-    {
-        ContentViewModel = ServiceProvider.GetRequiredService<MainViewModel>();
-        return Task.CompletedTask;
-    }
-
-    public void Receive(SplashViewFinishedEventData message)
+    public void Receive(SplashViewFinishedMessage message)
     {
         ContentViewModel = ServiceProvider.GetRequiredService<MainViewModel>();
     }

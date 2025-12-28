@@ -1,7 +1,7 @@
 ﻿using Avalonia.Collections;
 using Lucide.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.DependencyInjection;
+using Snatch.Dependency;
 using ZLinq;
 
 namespace Snatch.ViewModels.Pages;

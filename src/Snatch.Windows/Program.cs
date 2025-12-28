@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -19,6 +18,6 @@ internal static class Program
     public static async Task<int> Main() => await Host.RunSnatchAsync();
 
     // Avalonia configuration, don't remove; also used by visual designer.
-    [UsedImplicitly]
+    // ReSharper disable once UnusedMember.Global
     public static AppBuilder BuildAvaloniaApp() => Host.Services.GetRequiredService<AppBuilder>();
 }

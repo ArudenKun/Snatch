@@ -1,43 +1,17 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Autofac.Extensions.DependencyInjection;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Snatch.Hosting.Internals;
-using Volo.Abp;
-using Volo.Abp.Modularity;
 
 namespace Snatch.Hosting;
 
 public static class HostBuilderExtensions
 {
-    public static IHostBuilder UseApplication<TStartupModule>(
-        this IHostBuilder builder,
-        Action<AbpApplicationCreationOptions>? optionsAction = null
-    )
-        where TStartupModule : IAbpModule =>
-        builder.UseApplication(typeof(TStartupModule), optionsAction);
-
-    public static IHostBuilder UseApplication(
-        this IHostBuilder builder,
-        Type startupModuleType,
-        Action<AbpApplicationCreationOptions>? optionsAction = null
-    ) =>
-        builder.ConfigureServices(
-            (ctx, services) =>
-                services.AddApplicationAsync(
-                    startupModuleType,
-                    options =>
-                    {
-                        options.Services.ReplaceConfiguration(ctx.Configuration);
-                        optionsAction?.Invoke(options);
-                        if (options.Environment.IsNullOrWhiteSpace())
-                        {
-                            options.Environment = ctx.HostingEnvironment.EnvironmentName;
-                        }
-                    }
-                )
-        );
+    public static IHostBuilder UseAutofac(this IHostBuilder builder) =>
+        builder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
     /// <summary>
     /// Adds Avalonia main window to the host's service collection,

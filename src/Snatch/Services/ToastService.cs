@@ -1,13 +1,11 @@
 ﻿using Avalonia.Controls.Notifications;
-using JetBrains.Annotations;
+using Snatch.Dependency;
 using Snatch.Models;
 using Snatch.Options;
 using SukiUI.Toasts;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Services;
 
-[UsedImplicitly]
 public sealed class ToastService : ISingletonDependency
 {
     private readonly ISukiToastManager _manager;

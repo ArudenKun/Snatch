@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Snatch.Models;
+namespace Snatch.Models.Messages;
 
-public class LogEntry
+public class LogMessage
 {
     public DateTimeOffset Timestamp { get; set; }
 

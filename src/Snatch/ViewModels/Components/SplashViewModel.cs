@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Humanizer;
-using Snatch.Models.EventData;
+using Snatch.Models.Messages;
 
-namespace Snatch.ViewModels;
+namespace Snatch.ViewModels.Components;
 
 public sealed partial class SplashViewModel : ViewModel
 {
@@ -21,11 +21,11 @@ public sealed partial class SplashViewModel : ViewModel
         await Task.Delay(1.Seconds());
         StatusText = "Loading Settings";
         await Task.Delay(200.Milliseconds());
-        Messenger.Send(new SplashViewFinishedEventData());
+        Messenger.Send(new SplashViewFinishedMessage());
 
         if (GeneralOptions.ShowConsole)
         {
-            Messenger.Send(new ConsoleWindowShowEventData());
+            Messenger.Send(new ConsoleWindowShowMessage());
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿using Avalonia.Collections;
+using Avalonia.Media;
 using Avalonia.Styling;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
 using R3;
+using Snatch.Dependency;
 using Snatch.Models;
 using Snatch.Options;
 using SukiUI;
 using SukiUI.Enums;
 using SukiUI.Models;
-using Volo.Abp.DependencyInjection;
 using ZLinq;
-using Color = Avalonia.Media.Color;
 
 namespace Snatch.Services;
 
@@ -44,7 +43,6 @@ public sealed class ThemeService : IDisposable, ISingletonDependency
 
     public SukiColorTheme CurrentColorTheme => ResolveColorTheme(_options.ThemeColor);
 
-    [PublicAPI]
     public IAvaloniaReadOnlyList<SukiColorTheme> ColorThemes => SukiTheme.ColorThemes;
 
     public void Initialize()

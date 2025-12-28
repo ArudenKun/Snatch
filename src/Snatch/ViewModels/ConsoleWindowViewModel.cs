@@ -1,18 +1,19 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
+using Snatch.Dependency;
 using Snatch.Models;
+using Snatch.Models.Messages;
 using Snatch.Utilities;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch.ViewModels;
 
 [Dependency(ServiceLifetime.Singleton)]
-public sealed class ConsoleWindowViewModel : ViewModel, IRecipient<LogEntry>
+public sealed class ConsoleWindowViewModel : ViewModel, IRecipient<LogMessage>
 {
-    public IAvaloniaList<LogEntry> Entries { get; } = new AvaloniaList<LogEntry>();
+    public IAvaloniaList<LogMessage> Entries { get; } = new AvaloniaList<LogMessage>();
 
-    public void Receive(LogEntry message)
+    public void Receive(LogMessage message)
     {
         DispatchHelper.Invoke(() => Entries.Add(message));
     }

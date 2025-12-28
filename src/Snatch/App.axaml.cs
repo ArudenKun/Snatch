@@ -10,12 +10,11 @@ using R3.ObservableEvents;
 using Snatch.Services;
 using Snatch.Utilities;
 using Snatch.ViewModels;
-using Volo.Abp.DependencyInjection;
 using ZLinq;
 
 namespace Snatch;
 
-public sealed class App : Application, IDisposable, ISingletonDependency
+public sealed class App : Application, IDisposable
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
     private readonly ViewLocator _viewLocator;
@@ -114,6 +113,7 @@ public sealed class App : Application, IDisposable, ISingletonDependency
     private static void DisableAvaloniaDataAnnotationValidation()
     {
         // Get an array of plugins to remove
+#pragma warning disable IL2026
         var dataValidationPluginsToRemove = BindingPlugins
             .DataValidators.AsValueEnumerable()
             .OfType<DataAnnotationsValidationPlugin>()
@@ -124,5 +124,6 @@ public sealed class App : Application, IDisposable, ISingletonDependency
         {
             BindingPlugins.DataValidators.Remove(plugin);
         }
+#pragma warning restore IL2026
     }
 }

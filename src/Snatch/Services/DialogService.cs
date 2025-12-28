@@ -1,9 +1,9 @@
 ﻿using Avalonia.Controls.Notifications;
 using Microsoft.Extensions.DependencyInjection;
+using Snatch.Dependency;
 using Snatch.Models;
 using Snatch.ViewModels.Dialogs;
 using SukiUI.Dialogs;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Services;
 

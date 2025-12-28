@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Snatch.Hosting.Internals;
-using Volo.Abp;
-using Volo.Abp.Autofac;
-using Volo.Abp.Modularity;
 
 namespace Snatch.Hosting;
 
@@ -15,47 +13,8 @@ public static class HostApplicationBuilderExtensions
 {
     public static IHostApplicationBuilder AddAutofac(this IHostApplicationBuilder builder)
     {
-        var containerBuilder = new ContainerBuilder();
-        builder.Services.AddObjectAccessor(containerBuilder);
-        builder.ConfigureContainer(new AbpAutofacServiceProviderFactory(containerBuilder));
+        builder.ConfigureContainer(new AutofacServiceProviderFactory());
         return builder;
-    }
-
-    public static async Task<IAbpApplicationWithExternalServiceProvider> AddApplicationAsync<TStartupModule>(
-        this HostApplicationBuilder builder,
-        Action<AbpApplicationCreationOptions>? optionsAction = null
-    )
-        where TStartupModule : IAbpModule
-    {
-        return await builder.Services.AddApplicationAsync<TStartupModule>(options =>
-        {
-            options.Services.ReplaceConfiguration(builder.Configuration);
-            optionsAction?.Invoke(options);
-            if (options.Environment.IsNullOrWhiteSpace())
-            {
-                options.Environment = builder.Environment.EnvironmentName;
-            }
-        });
-    }
-
-    public static async Task<IAbpApplicationWithExternalServiceProvider> AddApplicationAsync(
-        this HostApplicationBuilder builder,
-        Type startupModuleType,
-        Action<AbpApplicationCreationOptions>? optionsAction = null
-    )
-    {
-        return await builder.Services.AddApplicationAsync(
-            startupModuleType,
-            options =>
-            {
-                options.Services.ReplaceConfiguration(builder.Configuration);
-                optionsAction?.Invoke(options);
-                if (options.Environment.IsNullOrWhiteSpace())
-                {
-                    options.Environment = builder.Environment.EnvironmentName;
-                }
-            }
-        );
     }
 
     /// <summary>

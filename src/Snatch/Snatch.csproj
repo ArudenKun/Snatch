@@ -51,11 +51,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Dependency\" />
     <Folder Include="Mappers\" />
     <Folder Include="Properties\" />
     <Folder Include="ViewModels\Dialogs\" />
-    <Folder Include="Views\Components\" />
     <Folder Include="Views\Dialogs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\Components\SplashView.axaml.cs">
+      <DependentUpon>SplashView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

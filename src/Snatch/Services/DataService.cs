@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Snatch.Core;
+using Snatch.Dependency;
 using Snatch.Utilities;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Services;
 

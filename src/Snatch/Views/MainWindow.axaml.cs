@@ -1,13 +1,14 @@
-using Snatch.Models.EventData;
+using CommunityToolkit.Mvvm.Messaging;
+using Snatch.Models.Messages;
 using Snatch.ViewModels;
 
 namespace Snatch.Views;
 
-public sealed partial class MainWindow : SukiWindow<MainWindowViewModel>
-// ,
-// ILocalEventHandler<ConsoleWindowCloseEventData>,
-// ILocalEventHandler<ConsoleWindowShowEventData>,
-// ILocalEventHandler<ConsoleWindowHideEventData>
+public sealed partial class MainWindow
+    : SukiWindow<MainWindowViewModel>,
+        IRecipient<ConsoleWindowCloseMessage>,
+        IRecipient<ConsoleWindowShowMessage>,
+        IRecipient<ConsoleWindowHideMessage>
 {
     private readonly ViewLocator _viewLocator;
     private readonly ConsoleWindowViewModel _consoleWindowViewModel;
@@ -21,31 +22,28 @@ public sealed partial class MainWindow : SukiWindow<MainWindowViewModel>
         InitializeComponent();
     }
 
-    public Task HandleEventAsync(ConsoleWindowCloseEventData eventData)
+    public void Receive(ConsoleWindowCloseMessage message)
     {
         if (_consoleWindow is null)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         _consoleWindow.Close();
         _consoleWindow = null;
-        return Task.CompletedTask;
     }
 
-    public Task HandleEventAsync(ConsoleWindowShowEventData eventData)
+    public void Receive(ConsoleWindowShowMessage message)
     {
         _consoleWindow ??= _viewLocator.CreateView<ConsoleWindow, ConsoleWindowViewModel>(
             _consoleWindowViewModel
         );
         _consoleWindow.Show();
         Focus();
-        return Task.CompletedTask;
     }
 
-    public Task HandleEventAsync(ConsoleWindowHideEventData eventData)
+    public void Receive(ConsoleWindowHideMessage message)
     {
         _consoleWindow?.Hide();
-        return Task.CompletedTask;
     }
 }

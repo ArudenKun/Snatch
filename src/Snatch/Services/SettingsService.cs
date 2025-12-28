@@ -1,12 +1,15 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServiceScan.SourceGenerator;
+using Snatch.Core.Utilities.Extensions;
+using Snatch.Dependency;
 using Snatch.Options;
 using Snatch.Utilities;
-using Volo.Abp.DependencyInjection;
 using ZLinq;
 
 namespace Snatch.Services;
@@ -14,12 +17,14 @@ namespace Snatch.Services;
 public sealed partial class SettingsService : ISingletonDependency
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<SettingsService> _logger;
     private readonly Dictionary<object, PropertyInfo[]> _rootMap = [];
     private readonly Dictionary<OptionAttribute, object?> _sectionMap = new();
 
-    public SettingsService(IServiceProvider serviceProvider)
+    public SettingsService(IServiceProvider serviceProvider, ILogger<SettingsService> logger)
     {
         _serviceProvider = serviceProvider;
+        _logger = logger;
     }
 
     private static string FilePath => AppHelper.SettingsPath;
@@ -75,10 +80,15 @@ public sealed partial class SettingsService : ISingletonDependency
         }
 
         // 7. Serialize and write safely
+#pragma warning disable IL2026
+#pragma warning disable IL3050
         var jsonBytes = JsonSerializer.SerializeToUtf8Bytes(
+#pragma warning restore IL3050
+#pragma warning restore IL2026
             finalData,
             SettingsServiceSerializerContext.Default.Options
         );
+        _logger.LogInformation("Saving settings file {SettingsFilePath}", FilePath);
         return jsonBytes;
     }
 
@@ -88,7 +98,13 @@ public sealed partial class SettingsService : ISingletonDependency
     )]
     private partial void PopulateOptions();
 
-    private void PopulateOptionsHandler<T>()
+    private void PopulateOptionsHandler<
+        [DynamicallyAccessedMembers(
+            DynamicallyAccessedMemberTypes.PublicProperties
+                | DynamicallyAccessedMemberTypes.PublicParameterlessConstructor
+        )]
+            T
+    >()
         where T : class
     {
         var option = _serviceProvider.GetService<IOptions<T>>()?.Value;

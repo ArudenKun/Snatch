@@ -2,13 +2,17 @@
 using Snatch.Utilities;
 using Snatch.ViewModels;
 using SukiUI.Controls;
-using Volo.Abp.DependencyInjection;
 
 namespace Snatch.Views;
 
 public abstract class SukiWindow<TViewModel> : SukiWindow, IView<TViewModel>
     where TViewModel : ViewModel
 {
+    public SukiWindow()
+    {
+        MessengerRegistrator.Register(this);
+    }
+
     public new TViewModel DataContext
     {
         get =>
