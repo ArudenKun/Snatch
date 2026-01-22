@@ -8,7 +8,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Humanizer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -22,10 +21,10 @@ using Snatch.Utilities;
 using Snatch.Utilities.Extensions;
 using Snatch.ViewModels;
 using Snatch.Views;
+using Stashbox.Registration.Fluent;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using Velopack;
-using ZLinq;
 
 namespace Snatch;
 
@@ -79,7 +78,7 @@ public static partial class SnatchBootstrap
                 .ConfigureConfiguration()
                 .ConfigureServices()
                 .ConfigureAvalonia(configure)
-                .UseAutofac()
+                .UseStashbox()
                 .UseConsoleLifetime();
         }
 
@@ -87,7 +86,7 @@ public static partial class SnatchBootstrap
             hostBuilder.ConfigureServices(
                 (_, services) =>
                 {
-                    services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
+                    services.AddSingleton<IMessenger>(StrongReferenceMessenger.Default);
                     services.AddSingleton<ISukiToastManager, SukiToastManager>();
                     services.AddSingleton<ISukiDialogManager, SukiDialogManager>();
                     services.AddServices();
@@ -180,23 +179,58 @@ public static partial class SnatchBootstrap
 
     [GenerateServiceRegistrations(
         AssignableTo = typeof(ISingletonDependency),
-        AsSelf = true,
-        AsImplementedInterfaces = true,
-        Lifetime = ServiceLifetime.Singleton
+        ExcludeAssignableTo = typeof(ViewModel),
+        CustomHandler = nameof(AddServicesHandler)
     )]
-    // [GenerateServiceRegistrations(
-    //     AssignableTo = typeof(IScopedDependency),
-    //     AsSelf = true,
-    //     AsImplementedInterfaces = true,
-    //     Lifetime = ServiceLifetime.Scoped
-    // )]
-    // [GenerateServiceRegistrations(
-    //     AssignableTo = typeof(ITransientDependency),
-    //     AsSelf = true,
-    //     AsImplementedInterfaces = true,
-    //     Lifetime = ServiceLifetime.Transient
-    // )]
+    [GenerateServiceRegistrations(
+        AssignableTo = typeof(IScopedDependency),
+        ExcludeAssignableTo = typeof(ViewModel),
+        CustomHandler = nameof(AddServicesHandler)
+    )]
+    [GenerateServiceRegistrations(
+        AssignableTo = typeof(ITransientDependency),
+        ExcludeAssignableTo = typeof(ViewModel),
+        CustomHandler = nameof(AddServicesHandler)
+    )]
     public static partial IServiceCollection AddServices(this IServiceCollection services);
+
+    private static void AddServicesHandler<T>(IServiceCollection services)
+        where T : class
+    {
+        var type = typeof(T);
+
+        Func<RegistrationConfigurator<T, T>, RegistrationConfigurator<T, T>> func = c =>
+            c.AsImplementedTypes()
+                .WithInitializer(
+                    (instance, _) =>
+                    {
+                        if (instance is IInitializer initializer)
+                        {
+                            initializer.OnCreate();
+                        }
+                    }
+                )
+                .WithFinalizer(instance =>
+                {
+                    if (instance is IFinalizer finalizer)
+                    {
+                        finalizer.OnDestroy();
+                    }
+                });
+
+        if (type.IsAssignableTo(typeof(ISingletonDependency)))
+        {
+            services.AddSingleton(func);
+        }
+        else if (type.IsAssignableTo(typeof(IScopedDependency)))
+        {
+            services.AddScoped(func);
+        }
+        else
+        {
+            services.AddTransient(func);
+        }
+    }
 
     [GenerateServiceRegistrations(
         AttributeFilter = typeof(OptionAttribute),
@@ -233,8 +267,16 @@ public static partial class SnatchBootstrap
         where TView : Control, IView<TViewModel>
         where TViewModel : ViewModel
     {
-        services.AddTransient<TView>();
-        services.AddTransient<IView<TViewModel>>(sp => sp.GetRequiredService<TView>());
+        services.AddTransient<TView, TView>(configurator: c =>
+            c.AsServiceAlso<IView<TViewModel>>()
+                .WithFinalizer(instance =>
+                {
+                    if (instance is IFinalizer finalizer)
+                    {
+                        finalizer.OnDestroy();
+                    }
+                })
+        );
     }
 
     [GenerateServiceRegistrations(
@@ -252,39 +294,40 @@ public static partial class SnatchBootstrap
         var lifetime =
             viewModelType.GetCustomAttribute<DependencyAttribute>()?.Lifetime
             ?? ServiceLifetime.Transient;
-        var viewModelDescriptor = ServiceDescriptor.Describe(
-            viewModelType,
-            viewModelType,
-            lifetime
-        );
-        var viewModelBaseDescriptors = EnumerateBaseTypes<ViewModel>(viewModelType)
-            .AsValueEnumerable()
-            .Select(baseType =>
-                ServiceDescriptor.Describe(
-                    baseType,
-                    sp => sp.GetRequiredService<TViewModel>(),
-                    lifetime
-                )
-            )
-            .ToArray();
-        services.Add(viewModelDescriptor);
-        services.Add(viewModelBaseDescriptors);
-    }
 
-    private static IEnumerable<Type> EnumerateBaseTypes<TRoot>(Type t)
-    {
-        ArgumentNullException.ThrowIfNull(t);
-
-        var baseType = t.BaseType;
-        while (baseType is not null && baseType != typeof(object))
+        Func<
+            RegistrationConfigurator<TViewModel, TViewModel>,
+            RegistrationConfigurator<TViewModel, TViewModel>
+        > func = c => c.AsImplementedTypes()
+        // .WithInitializer(
+        //     (instance, _) =>
+        //     {
+        //         if (instance is IInitializer initializer)
+        //         {
+        //             initializer.OnCreate();
+        //         }
+        //     }
+        // )
+        // .WithFinalizer(instance =>
+        // {
+        //     if (instance is IFinalizer finalizer)
+        //     {
+        //         finalizer.OnDestroy();
+        //     }
+        // })
+        ;
+        switch (lifetime)
         {
-            yield return baseType;
-            if (baseType == typeof(TRoot))
-            {
-                yield break;
-            }
-
-            baseType = baseType.BaseType;
+            case ServiceLifetime.Singleton:
+                services.AddSingleton(func);
+                break;
+            case ServiceLifetime.Scoped:
+                services.AddScoped(func);
+                break;
+            case ServiceLifetime.Transient:
+            default:
+                services.AddTransient(func);
+                break;
         }
     }
 }

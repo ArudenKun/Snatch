@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Snatch.Dependency;
-using Snatch.Models.Messages;
+using Snatch.Messaging.Messages;
 using Snatch.ViewModels.Pages;
 using ZLinq;
 

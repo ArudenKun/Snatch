@@ -1,6 +1,6 @@
 ﻿using Snatch.ViewModels;
 
-namespace Snatch.Models.Messages;
+namespace Snatch.Messaging.Messages;
 
 public sealed record ShowPageMessage(Type ViewModelType)
 {

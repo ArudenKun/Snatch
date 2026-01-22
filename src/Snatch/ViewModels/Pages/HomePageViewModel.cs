@@ -15,7 +15,7 @@ public sealed partial class HomePageViewModel : PageViewModel
     {
         Test = Random.Shared.Next(0, 100);
         OnPropertyChanged(nameof(Test));
-
+        DataService.Test = Guid.CreateVersion7().ToString();
         Logger.LogInformation($"{nameof(HomePageViewModel)} {nameof(OnLoaded)}");
     }
 

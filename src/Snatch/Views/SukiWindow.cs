@@ -1,17 +1,27 @@
 ﻿using Avalonia.Interactivity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Snatch.Dependency;
 using Snatch.Utilities;
 using Snatch.ViewModels;
 using SukiUI.Controls;
 
 namespace Snatch.Views;
 
-public abstract class SukiWindow<TViewModel> : SukiWindow, IView<TViewModel>
+public abstract class SukiWindow<TViewModel> : SukiWindow, IView<TViewModel>, IFinalizer
     where TViewModel : ViewModel
 {
     public SukiWindow()
     {
-        MessengerRegistrator.Register(this);
+        MessengerConfigurator.RegisterRecipients(this);
+        MessengerConfigurator.RegisterRequestors(this);
     }
+
+    public required IServiceProvider ServiceProvider { protected get; init; }
+
+    protected ILoggerFactory LoggerFactory => ServiceProvider.GetRequiredService<ILoggerFactory>();
+
+    protected ILogger Logger => LoggerFactory.CreateLogger(GetType().FullName!);
 
     public new TViewModel DataContext
     {
@@ -35,5 +45,11 @@ public abstract class SukiWindow<TViewModel> : SukiWindow, IView<TViewModel>
     {
         base.OnUnloaded(e);
         DispatchHelper.Invoke(() => ViewModel.OnUnloaded());
+    }
+
+    public void OnDestroy()
+    {
+        MessengerConfigurator.UnRegisterRecipients(this);
+        MessengerConfigurator.UnRegisterRequestors(this);
     }
 }

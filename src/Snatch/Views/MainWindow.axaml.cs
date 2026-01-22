@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Snatch.Models.Messages;
+using Snatch.Messaging.Messages;
 using Snatch.ViewModels;
 
 namespace Snatch.Views;

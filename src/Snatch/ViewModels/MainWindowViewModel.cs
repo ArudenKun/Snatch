@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Snatch.Dependency;
-using Snatch.Models.Messages;
+using Snatch.Messaging.Messages;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 

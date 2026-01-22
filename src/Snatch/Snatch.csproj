@@ -36,6 +36,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Stashbox" />
+    <PackageReference Include="Stashbox.Extensions.Hosting" />
     <PackageReference Include="SukiUI.Dock" />
     <PackageReference Include="Velopack" />
   </ItemGroup>
@@ -51,7 +53,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Mappers\" />
     <Folder Include="Properties\" />
     <Folder Include="ViewModels\Dialogs\" />
     <Folder Include="Views\Dialogs\" />

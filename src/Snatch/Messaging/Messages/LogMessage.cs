@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Snatch.Models.Messages;
+namespace Snatch.Messaging.Messages;
 
 public class LogMessage
 {

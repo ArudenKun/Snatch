@@ -16,7 +16,8 @@ public abstract partial class ViewModel : ObservableValidator, IDisposable
 {
     protected ViewModel()
     {
-        MessengerRegistrator.Register(this);
+        MessengerConfigurator.RegisterRecipients(this);
+        MessengerConfigurator.RegisterRequestors(this);
     }
 
     public required IServiceProvider ServiceProvider { protected get; init; }
@@ -33,6 +34,8 @@ public abstract partial class ViewModel : ObservableValidator, IDisposable
 
     protected SettingsService SettingsService =>
         ServiceProvider.GetRequiredService<SettingsService>();
+
+    protected DataService DataService => ServiceProvider.GetRequiredService<DataService>();
 
     protected ThemeService ThemeService => ServiceProvider.GetRequiredService<ThemeService>();
 
@@ -134,6 +137,8 @@ public abstract partial class ViewModel : ObservableValidator, IDisposable
 
         if (disposing)
         {
+            MessengerConfigurator.UnRegisterRecipients(this);
+            MessengerConfigurator.UnRegisterRequestors(this);
             _disposables.Dispose();
         }
 

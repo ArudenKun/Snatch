@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Humanizer;
-using Snatch.Models.Messages;
+using Snatch.Messaging.Messages;
 
 namespace Snatch.ViewModels.Components;
 

@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,12 +9,6 @@ namespace Snatch.Hosting;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static IHostApplicationBuilder AddAutofac(this IHostApplicationBuilder builder)
-    {
-        builder.ConfigureContainer(new AutofacServiceProviderFactory());
-        return builder;
-    }
-
     /// <summary>
     /// Adds Avalonia main window to the host's service collection,
     /// and a <see cref="AppBuilder"/> to create the Avalonia application.

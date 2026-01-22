@@ -4,12 +4,12 @@ namespace Snatch.Services;
 
 public sealed class LifetimeHostedService : IHostedService
 {
-    private readonly SettingsService _settingsService;
-
-    public LifetimeHostedService(SettingsService settingsService)
-    {
-        _settingsService = settingsService;
-    }
+    // private readonly SettingsService _settingsService;
+    //
+    // public LifetimeHostedService(SettingsService settingsService)
+    // {
+    //     _settingsService = settingsService;
+    // }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -18,6 +18,6 @@ public sealed class LifetimeHostedService : IHostedService
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        await _settingsService.SaveAsync();
+        // await _settingsService.SaveAsync();
     }
 }

@@ -5,8 +5,8 @@ using Riok.Mapperly.Abstractions;
 using Serilog.Core;
 using Serilog.Events;
 using Snatch.Dependency;
+using Snatch.Messaging.Messages;
 using Snatch.Models;
-using Snatch.Models.Messages;
 
 namespace Snatch.Services;
 

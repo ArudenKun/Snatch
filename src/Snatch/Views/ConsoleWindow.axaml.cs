@@ -1,8 +1,8 @@
 ﻿using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.LogicalTree;
+using Snatch.Messaging.Messages;
 using Snatch.Models;
-using Snatch.Models.Messages;
 using Snatch.Utilities;
 using Snatch.ViewModels;
 

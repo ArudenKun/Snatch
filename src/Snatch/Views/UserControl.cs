@@ -1,13 +1,28 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Snatch.Dependency;
 using Snatch.Utilities;
 using Snatch.ViewModels;
 
 namespace Snatch.Views;
 
-public abstract class UserControl<TViewModel> : UserControl, IView<TViewModel>
+public abstract class UserControl<TViewModel> : UserControl, IView<TViewModel>, IFinalizer
     where TViewModel : ViewModel
 {
+    public UserControl()
+    {
+        MessengerConfigurator.RegisterRecipients(this);
+        MessengerConfigurator.RegisterRequestors(this);
+    }
+
+    public required IServiceProvider ServiceProvider { protected get; init; }
+
+    protected ILoggerFactory LoggerFactory => ServiceProvider.GetRequiredService<ILoggerFactory>();
+
+    protected ILogger Logger => LoggerFactory.CreateLogger(GetType().FullName!);
+
     public new TViewModel DataContext
     {
         get =>
@@ -30,5 +45,11 @@ public abstract class UserControl<TViewModel> : UserControl, IView<TViewModel>
     {
         base.OnUnloaded(e);
         DispatchHelper.Invoke(() => ViewModel.OnUnloaded());
+    }
+
+    public void OnDestroy()
+    {
+        MessengerConfigurator.UnRegisterRecipients(this);
+        MessengerConfigurator.UnRegisterRequestors(this);
     }
 }
