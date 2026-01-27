@@ -23,11 +23,13 @@ public sealed partial class SettingsService : ISingletonDependency
 
     public SettingsService(IServiceProvider serviceProvider, ILogger<SettingsService> logger)
     {
+        FilePath = AppHelper.SettingsPath;
+
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
-    private static string FilePath => AppHelper.SettingsPath;
+    public string FilePath { get; }
 
     public void Save()
     {

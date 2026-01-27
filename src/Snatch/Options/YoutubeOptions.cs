@@ -1,9 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Snatch.Core.Youtube;
-using Snatch.Core.Youtube.Downloading;
-using YoutubeExplode.Videos.Streams;
 
 namespace Snatch.Options;
 

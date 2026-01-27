@@ -2,14 +2,11 @@
 
 namespace Snatch.Core.YtDlp;
 
-public class YtDlp
+public partial class YtDlp
 {
-    private static readonly Regex RgxFile = new Regex(
-        @"^outfile:\s\""?(.*)\""?",
-        RegexOptions.Compiled
-    );
-    private static readonly Regex RgxFilePostProc = new Regex(
-        @"\[download\] Destination: [a-zA-Z]:\\\S+\.\S{3,}",
-        RegexOptions.Compiled
-    );
+    [GeneratedRegex(@"^outfile:\s\""?(.*)\""?", RegexOptions.Compiled)]
+    private partial Regex RgxFile { get; }
+
+    [GeneratedRegex(@"\[download\] Destination: [a-zA-Z]:\\\S+\.\S{3,}", RegexOptions.Compiled)]
+    private partial Regex RgxFilePostProc { get; }
 }
