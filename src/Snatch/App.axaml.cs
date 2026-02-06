@@ -21,6 +21,7 @@ public sealed class App : Application, IDisposable
     private readonly ToastService _toastService;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ThemeService _themeService;
+    private readonly SettingsService _settingsService;
 
     // private readonly ListenerLogEventSink _listenerLogEventSink;
 
@@ -31,7 +32,8 @@ public sealed class App : Application, IDisposable
         ViewLocator viewLocator,
         ToastService toastService,
         ILoggerFactory loggerFactory,
-        ThemeService themeService
+        ThemeService themeService,
+        SettingsService settingsService
     // , ListenerLogEventSink listenerLogEventSink
     )
     {
@@ -40,6 +42,7 @@ public sealed class App : Application, IDisposable
         _toastService = toastService;
         _loggerFactory = loggerFactory;
         _themeService = themeService;
+        _settingsService = settingsService;
         // _listenerLogEventSink = listenerLogEventSink;
     }
 
@@ -98,6 +101,7 @@ public sealed class App : Application, IDisposable
 
     public void Dispose()
     {
+        _settingsService.Save();
         _subscriptions?.Dispose();
     }
 

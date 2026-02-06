@@ -1,7 +1,6 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Media;
 using Avalonia.Styling;
-using Microsoft.Extensions.Options;
 using R3;
 using Snatch.Dependency;
 using Snatch.Models;
@@ -20,9 +19,9 @@ public sealed class ThemeService : IDisposable, ISingletonDependency
 
     private bool _initialized;
 
-    public ThemeService(IOptions<AppearanceOptions> options)
+    public ThemeService(SettingsService settingsService)
     {
-        _options = options.Value;
+        _options = settingsService.Get<AppearanceOptions>();
         _subscriptions = Disposable.Combine(
             _options
                 .ObservePropertyChanged(x => x.Theme, false)

@@ -11,10 +11,10 @@ public sealed class ToastService : ISingletonDependency
     private readonly ISukiToastManager _manager;
     private readonly AppearanceOptions _options;
 
-    public ToastService(ISukiToastManager manager, AppearanceOptions options)
+    public ToastService(ISukiToastManager manager, SettingsService settingsService)
     {
         _manager = manager;
-        _options = options;
+        _options = settingsService.Get<AppearanceOptions>();
     }
 
     /// <summary>

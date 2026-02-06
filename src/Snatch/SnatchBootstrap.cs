@@ -9,7 +9,6 @@ using Humanizer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Events;
 using ServiceScan.SourceGenerator;
@@ -144,7 +143,7 @@ public static partial class SnatchBootstrap
 
         private IHostBuilder ConfigureConfiguration() =>
             hostBuilder
-                .ConfigureServices((ctx, services) => services.AddOptions(ctx.Configuration))
+                // .ConfigureServices((ctx, services) => services.AddOptions(ctx.Configuration))
                 .ConfigureHostConfiguration(configHost =>
                     configHost.AddConfiguration(
                         ConfigurationHelper.BuildConfiguration(
@@ -232,27 +231,27 @@ public static partial class SnatchBootstrap
         }
     }
 
-    [GenerateServiceRegistrations(
-        AttributeFilter = typeof(OptionAttribute),
-        CustomHandler = nameof(AddOptionsHandler)
-    )]
-    public static partial IServiceCollection AddOptions(
-        this IServiceCollection services,
-        IConfiguration configuration
-    );
-
-    private static void AddOptionsHandler<T>(
-        IServiceCollection services,
-        IConfiguration configuration
-    )
-        where T : class, new()
-    {
-        var sectionKey = typeof(T).GetCustomAttribute<OptionAttribute>()?.Section;
-        var section = sectionKey is null ? configuration : configuration.GetSection(sectionKey);
-        services
-            .Configure<T>(section)
-            .AddSingleton(sp => sp.GetRequiredService<IOptions<T>>().Value);
-    }
+    // [GenerateServiceRegistrations(
+    //     AttributeFilter = typeof(OptionAttribute),
+    //     CustomHandler = nameof(AddOptionsHandler)
+    // )]
+    // public static partial IServiceCollection AddOptions(
+    //     this IServiceCollection services,
+    //     IConfiguration configuration
+    // );
+    //
+    // private static void AddOptionsHandler<T>(
+    //     IServiceCollection services,
+    //     IConfiguration configuration
+    // )
+    //     where T : class, new()
+    // {
+    //     var sectionKey = typeof(T).GetCustomAttribute<OptionAttribute>()?.Section;
+    //     var section = sectionKey is null ? configuration : configuration.GetSection(sectionKey);
+    //     services
+    //         .Configure<T>(section)
+    //         .AddSingleton(sp => sp.GetRequiredService<IOptions<T>>().Value);
+    // }
 
     [GenerateServiceRegistrations(
         AssignableTo = typeof(IView<>),

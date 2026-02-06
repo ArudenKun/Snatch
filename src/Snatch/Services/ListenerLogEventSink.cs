@@ -39,11 +39,11 @@ public sealed partial class ListenerLogEventSink : ILogEventSink, ISingletonDepe
 
         using var scope = _serviceProvider.CreateScope();
         var messenger = scope.ServiceProvider.GetRequiredService<IMessenger>();
-        messenger.Send(LogEntryMapper.Map(logEvent));
+        messenger.Send(LogMessageMapper.Map(logEvent));
     }
 
     [Mapper(AutoUserMappings = false, RequiredMappingStrategy = RequiredMappingStrategy.None)]
-    private static partial class LogEntryMapper
+    private static partial class LogMessageMapper
     {
         [MapProperty(
             nameof(LogEvent.Level),

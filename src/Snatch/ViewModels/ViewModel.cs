@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using R3;
 using Snatch.Options;
 using Snatch.Services;
@@ -39,17 +38,13 @@ public abstract partial class ViewModel : ObservableValidator, IDisposable
 
     protected ThemeService ThemeService => ServiceProvider.GetRequiredService<ThemeService>();
 
-    public GeneralOptions GeneralOptions =>
-        ServiceProvider.GetRequiredService<IOptions<GeneralOptions>>().Value;
+    public GeneralOptions GeneralOptions => SettingsService.Get<GeneralOptions>();
 
-    public AppearanceOptions AppearanceOptions =>
-        ServiceProvider.GetRequiredService<IOptions<AppearanceOptions>>().Value;
+    public AppearanceOptions AppearanceOptions => SettingsService.Get<AppearanceOptions>();
 
-    public LoggingOptions LoggingOptions =>
-        ServiceProvider.GetRequiredService<IOptions<LoggingOptions>>().Value;
+    public LoggingOptions LoggingOptions => SettingsService.Get<LoggingOptions>();
 
-    public YoutubeOptions YoutubeOptions =>
-        ServiceProvider.GetRequiredService<IOptions<YoutubeOptions>>().Value;
+    public YoutubeOptions YoutubeOptions => SettingsService.Get<YoutubeOptions>();
 
     public IStorageProvider StorageProvider =>
         ServiceProvider.GetRequiredService<IStorageProvider>();
